@@ -682,21 +682,182 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
   // Command: /op-add-item - Add a 1Password item reference
   // ============================================================
   pi.registerCommand("op-add-item", {
-    description: "Add a 1Password secret reference to the current project env",
-    getArgumentCompletions: (_prefix: string): AutocompleteItem[] | null => {
-      const commonItems = [
-        "GITHUB_TOKEN",
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "GOOGLE_GENERATIVE_AI_API_KEY",
-        "HUGGINGFACE_API_TOKEN"
-      ];
-      return commonItems.map(item => ({ value: item, label: item }));
+    description: "Add a 1Password secret reference to project or global env",
+    getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
+      // Get items from 1Password instead of hardcoded list
+      try {
+        const { stdout } = execSync("op item list --format json", { encoding: "utf8", maxBuffer: 1024 * 1024 });
+        const items = JSON.parse(stdout);
+        
+        return items.filter((item: any) => {
+          const name = (item.name || "").toLowerCase();
+          const vault = (item.vault || "").toLowerCase();
+          return name.includes(prefix.toLowerCase()) || vault.includes(prefix.toLowerCase());
+        }).slice(0, 20).map((item: any) => ({
+          value: item.name,
+          label: `${item.name} (${item.vault})`
+        }));
+      } catch {
+        // Fallback to common items if op item list fails
+        const commonItems = [
+          "GITHUB_TOKEN",
+          "OPENAI_API_KEY",
+          "ANTHROPIC_API_KEY",
+          "GOOGLE_GENERATIVE_AI_API_KEY",
+          "HUGGINGFACE_API_TOKEN"
+        ];
+        return commonItems.filter(item => item.toLowerCase().includes(prefix.toLowerCase()))
+          .map(item => ({ value: item, label: item }));
+      }
     },
     handler: async (args, ctx) => {
       if (!args) {
-        ctx.ui.notify("Usage: /op-add-item VAR_NAME op://vault/item/field", "error");
-        ctx.ui.notify("Example: /op-add-item OPENAI_API_KEY op://Private/API-Keys/openai", "info");
+        ctx.ui.notify("Usage: /op-add-item VAR_NAME op://vault/item/field [--global]", "error");
+        ctx.ui.notify("Example: /op-add-item OPENAI_API_KEY op://Private/API-Keys/openai --global", "info");
+        return;
+      }
+      
+      // Parse arguments and flags
+      const parts = args.trim().split(/\s+/);
+      let flat = parts.filter(p => !p.startsWith("--"));
+      let flags = parts.filter(p => p.startsWith("--"));
+      
+      let varName = flat[0].toUpperCase();
+      
+      while (varName.length > 0 && /[^A-Z0-9_]/.test(varName[varName.length - 1])) {
+        varName = varName.slice(0, -1);
+      }
+      
+      let reference = flat.slice(1).join(" ").replace(/["']/g, "");
+      
+      if (!reference) {
+        ctx.ui.notify(`No reference provided for ${varName}`, "warning");
+        ctx.ui.notify("Format: op://vault/item/field", "info");
+        ctx.ui.notify("Examples:", "info");
+        ctx.ui.notify("  op://Private/API-Keys/openai", "info");
+        ctx.ui.notify("  op://Personal/GitHub/token", "info");
+        ctx.ui.notify("  op://Work/Database/prod", "info");
+        return;
+      }
+      
+      if (!reference.startsWith("op://")) {
+        ctx.ui.notify(`Invalid reference format: ${reference}. Must start with 'op://'`, "error");
+        return;
+      }
+      
+      // Determine target file based on --global flag
+      const isGlobal = flags.includes("--global");
+      let filePath: string;
+      let envType: string;
+      
+      if (isGlobal) {
+        filePath = USER_ENV_FILE;
+        envType = "global";
+      } else {
+        filePath = resolve(ctx.cwd, ".env.1pass");
+        envType = "project";
+      }
+      
+      // Ensure file exists
+      if (!existsSync(filePath)) {
+        if (envType === "project") {
+          ctx.ui.notify(`Project env file not found: ${filePath}`, "warning");
+          ctx.ui.notify("Create it with: /op-create-env .env.1pass", "info");
+          return;
+        }
+        // Create global env file if it doesn't exist
+        const template = `# Global 1Password Environment
+# Located at: ${filePath}
+# These variables are loaded automatically on Pi session start
+# Format: export VAR="op://vault/item/field"
+
+# API Keys
+# export OPENAI_API_KEY="op://Private/API-Keys/openai"
+# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# export GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
+`;
+        writeFileSync(USER_CONFIG_DIR, { mode: 0o600 });
+      }
+      
+      // Read existing lines
+      let envLines = existsSync(filePath) 
+        ? readFileSync(filePath, "utf8").split("\n") 
+        : [];
+      
+      // Remove existing entry if present (smart update)
+      const oldLine = envLines.find(line => {
+        const match = line.match(/^export\s+\w+/);
+        if (match) {
+          const key = match[0].replace(/^export\s+/, "");
+          return key === varName;
+        }
+        return false;
+      });
+      
+      envLines = envLines.filter(line => {
+        const match = line.match(/^export\s+\w+/);
+        if (match) {
+          const key = match[0].replace(/^export\s+/, "");
+          return key !== varName;
+        }
+        return true;
+      });
+      
+      // Add new line
+      envLines.push(`export ${varName}="${reference}"`);
+      writeFileSync(filePath, envLines.join("\n") + "\n", { mode: 0o600 });
+      
+      if (oldLine) {
+        ctx.ui.notify(`Updated ${varName} in ${envType} env`, "success");
+      } else {
+        ctx.ui.notify(`Added ${varName} to ${envType} env`, "success");
+      }
+      ctx.ui.notify(`Reference: ${reference}`, "info");
+      
+      if (isGlobal) {
+        ctx.ui.notify("Run /op-env-user to reload", "info");
+      } else {
+        ctx.ui.notify("Run /op-env to reload", "info");
+      }
+    },
+  });
+
+  // ============================================================
+  // Command: /op-add-global-item - Add a 1Password item to global env
+  // ============================================================
+  pi.registerCommand("op-add-global-item", {
+    description: "Add a 1Password secret reference to the global user env",
+    getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
+      // Get items from 1Password instead of hardcoded list
+      try {
+        const { stdout } = execSync("op item list --format json", { encoding: "utf8", maxBuffer: 1024 * 1024 });
+        const items = JSON.parse(stdout);
+        
+        return items.filter((item: any) => {
+          const name = (item.name || "").toLowerCase();
+          const vault = (item.vault || "").toLowerCase();
+          return name.includes(prefix.toLowerCase()) || vault.includes(prefix.toLowerCase());
+        }).slice(0, 20).map((item: any) => ({
+          value: item.name,
+          label: `${item.name} (${item.vault})`
+        }));
+      } catch {
+        // Fallback to common items if op item list fails
+        const commonItems = [
+          "GITHUB_TOKEN",
+          "OPENAI_API_KEY",
+          "ANTHROPIC_API_KEY",
+          "GOOGLE_GENERATIVE_AI_API_KEY",
+          "HUGGINGFACE_API_TOKEN"
+        ];
+        return commonItems.filter(item => item.toLowerCase().includes(prefix.toLowerCase()))
+          .map(item => ({ value: item, label: item }));
+      }
+    },
+    handler: async (args, ctx) => {
+      if (!args) {
+        ctx.ui.notify("Usage: /op-add-global-item VAR_NAME op://vault/item/field", "error");
+        ctx.ui.notify("Example: /op-add-global-item OPENAI_API_KEY op://Private/API-Keys/openai", "info");
         return;
       }
       
@@ -724,10 +885,34 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
         return;
       }
       
-      const projectEnvPath = resolve(ctx.cwd, ".env.1pass");
-      let envLines = existsSync(projectEnvPath) 
-        ? readFileSync(projectEnvPath, "utf8").split("\n") 
-        : [];
+      // Ensure global env file exists
+      if (!existsSync(USER_ENV_FILE)) {
+        const template = `# Global 1Password Environment
+# Located at: ${USER_ENV_FILE}
+# These variables are loaded automatically on Pi session start
+# Format: export VAR="op://vault/item/field"
+
+# API Keys
+# export OPENAI_API_KEY="op://Private/API-Keys/openai"
+# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# export GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
+`;
+        writeFileSync(USER_ENV_FILE, template, { mode: 0o600 });
+        ctx.ui.notify(`Created global env file: ${USER_ENV_FILE}`, "info");
+      }
+      
+      // Read existing lines
+      let envLines = readFileSync(USER_ENV_FILE, "utf8").split("\n");
+      
+      // Remove existing entry if present (smart update)
+      const oldLine = envLines.find(line => {
+        const match = line.match(/^export\s+\w+/);
+        if (match) {
+          const key = match[0].replace(/^export\s+/, "");
+          return key === varName;
+        }
+        return false;
+      });
       
       envLines = envLines.filter(line => {
         const match = line.match(/^export\s+\w+/);
@@ -738,10 +923,17 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
         return true;
       });
       
+      // Add new line
       envLines.push(`export ${varName}="${reference}"`);
-      writeFileSync(projectEnvPath, envLines.join("\n") + "\n", { mode: 0o600 });
-      ctx.ui.notify(`Added ${varName} to ${projectEnvPath}`, "success");
+      writeFileSync(USER_ENV_FILE, envLines.join("\n") + "\n", { mode: 0o600 });
+      
+      if (oldLine) {
+        ctx.ui.notify(`Updated ${varName} in global env`, "success");
+      } else {
+        ctx.ui.notify(`Added ${varName} to global env`, "success");
+      }
       ctx.ui.notify(`Reference: ${reference}`, "info");
+      ctx.ui.notify("Run /op-env-user to reload", "info");
     },
   });
 
