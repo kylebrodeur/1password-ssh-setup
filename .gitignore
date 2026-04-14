@@ -70,3 +70,12 @@ logs/
 tmp/
 temp/
 *.tmp
+# Skills directories (distributed via npm/skills)
+skills/
+pi.skills/
+
+# Package files
+node_modules/
+*.tgz
+package-lock.json
+npm-debug.log
