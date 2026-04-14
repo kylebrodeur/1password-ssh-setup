@@ -172,8 +172,8 @@ EOF
 install_pi_extension() {
     echo "Installing Pi extension..."
     
-    if [ -f "$SRC_DIR/pi-extension/1password.ts" ]; then
-        cp "$SRC_DIR/pi-extension/1password.ts" "$PI_EXT_DIR/"
+    if [ -f "$SRC_DIR/extensions/1password.ts" ]; then
+        cp "$SRC_DIR/extensions/1password.ts" "$PI_EXT_DIR/"
         echo "  Installed: 1password.ts"
         echo ""
         echo -e "${YELLOW}Note: Run /reload in Pi to load the extension${NC}"

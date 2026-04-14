@@ -1,10 +1,9 @@
 {
-  "name": "1password-ssh-setup",
+  "name": "pi-1password",
   "version": "1.0.0",
-  "description": "1Password SSH Setup with Service Account - SSH agent integration and general secret management",
-  "main": "pi-extension/1password.ts",
+  "description": "1Password SSH Setup - SSH agent integration and Pi coding agent secret management",
+  "main": "extensions/1password.ts",
   "scripts": {
-    "install": "./install.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -13,7 +12,7 @@
     "agent",
     "security",
     "secrets",
-    "pi-extension"
+    "pi-package"
   ],
   "author": "Kyle Brodeur",
   "license": "MIT",
@@ -21,24 +20,14 @@
     "type": "git",
     "url": "https://github.com/kylebrodeur/1password-ssh-setup.git"
   },
-  "skills": [
-    {
-      "name": "1password-cli",
-      "path": "skills/1password-cli"
-    },
-    {
-      "name": "ssh-agent",
-      "path": "skills/ssh-agent"
-    },
-    {
-      "name": "1password-env",
-      "path": "skills/1password-env"
-    }
-  ],
+  "pi": {
+    "extensions": ["extensions"],
+    "skills": ["skills"]
+  },
   "files": [
     "install.sh",
     "src/",
-    "pi-extension/",
+    "extensions/",
     "examples/",
     "docs/",
     "skills/",

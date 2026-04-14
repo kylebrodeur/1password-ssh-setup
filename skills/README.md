@@ -49,9 +49,9 @@ Use when: You're using Pi coding agent and need 1Password integration with autom
 
 ```bash
 # Install as a skill package
-npm install 1password-ssh-setup
+npm install pi-1password
 
-# Skills are in node_modules/1password-ssh-setup/skills/
+# Skills are in node_modules/pi-1password/skills/
 ```
 
 ### Manual (via copy)

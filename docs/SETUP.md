@@ -174,7 +174,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ```bash
 mkdir -p ~/.pi/agent/extensions
-cp pi-extension/1password.ts ~/.pi/agent/extensions/
+cp extensions/1password.ts ~/.pi/agent/extensions/
 ```
 
 ---

@@ -4,13 +4,19 @@ Complete system for managing SSH keys and secrets using 1Password CLI with Pi in
 
 Based on ["Combining Keychain and 1Password CLI for ssh-agent management"](https://www.nijho.lt/post/ssh-1password-funtoo-keychain/) by Bas Nijholt.
 
-## Service Account Required
+## Authentication Options
 
-This setup **requires** a 1Password Service Account. Service Accounts provide:
-- Non-interactive authentication (no password prompts)
-- Persistent sessions (no expiry issues)
-- Reliable automation support (AI agents, CI/CD)
-- Vault-specific access control
+This setup supports two authentication methods with 1Password CLI:
+
+1. **User Account (Interactive)** - Recommended for personal machines
+   ```bash
+   eval $(op signin) -f
+   ```
+
+2. **Service Account (Automated)** - Recommended for CI/CD and isolated agents
+   - Non-interactive authentication (no password prompts)
+   - Persistent sessions (no expiry issues)
+   - Vault-specific access control
 
 ## Features
 - SSH Agent Integration - Keychain + 1Password for passphrase management
@@ -18,28 +24,35 @@ This setup **requires** a 1Password Service Account. Service Accounts provide:
 - Cascading Environment - User-level and project-level `.env.1pass` files
 - CLI Tools - `op-reference` for shell scripts and automation
 - Platform Support - Works on WSL and native Windows
-- Service Account Authentication - Required for all operations
+- Flexible Auth - Supports both Service Accounts and standard `op signin`
 
 ## Platform-Specific Setup
 
 This setup supports two platforms:
 
 ### WSL (Windows Subsystem for Linux)
-- 1Password CLI uses Service Account for authentication
-- No desktop app required for CLI operations
+- 1Password CLI handles authentication (Service Account or `op signin`)
 - Desktop app still needed for ssh-agent socket (if using SSH key management)
 
 ### Native Windows
-- 1Password CLI uses Service Account for authentication
+- 1Password CLI handles authentication
 - Windows native SSH client can use 1Password agent socket
 - Desktop app required for ssh-agent socket functionality
 
-Both platforms support the same secret references from 1Password vaults via Service Account authentication.
+Both platforms support the same secret references from 1Password vaults.
 
-### Service Account Authentication
+### Authentication Setup
 
+**Option A: User Account (Interactive)**
+To authenticate interactively with your personal account:
+```bash
+eval $(op signin) -f
+# Verify setup
+op account list
+```
+
+**Option B: Service Account (Automated)**
 To use `op` CLI commands with a Service Account:
-
 ```bash
 echo "export OP_SERVICE_ACCOUNT_TOKEN=your-service-account-token" >> ~/.zshrc
 source ~/.zshrc
@@ -48,26 +61,64 @@ source ~/.zshrc
 op account list
 ```
 
-See [docs/SETUP.md](docs/SETUP.md) for detailed Service Account setup instructions.
+See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 
 ## Project Structure
 
 ```
 1password-ssh-setup/
+├── skills/                 # Agent Skills (distribution)
+│   ├── 1password-cli/      # 1Password CLI skill
+│   ├── ssh-agent/          # SSH agent management skill
+│   └── 1password-env/      # Pi environment skill
 ├── src/                    # Core scripts
 │   ├── askpass-1password.sh     # SSH_ASKPASS script
 │   ├── setup_ssh_agent.sh       # Keychain initialization
 │   ├── op-reference             # CLI tool
-│   └── op-ai-helper.sh          # Shell helper functions
-├── pi-extension/           # Pi extension
-│   └── 1password.ts             # Pi extension source
+│   └── platform-check.sh        # OS detection
+├── extensions/             # Pi extension source
+│   └── 1password.ts             # Pi extension code
 ├── examples/               # Example configs
 │   └── env.1pass.template       # Environment template
 ├── docs/                   # Documentation
 │   └── SETUP.md                 # Detailed setup guide
-├── install.sh              # Installation script
-└── README.md              # This file
+├── install.sh              # Installation script for system setup
+├── package.json            # npm package & skills config
+└── README.md               # This file
 ```
+
+## Installation
+
+This project is divided into two independent parts:
+
+### Part 1: Pi Agent Package (Recommended)
+
+If you just want the Pi extension and skills to manage secrets in your AI coding agent, install the npm package:
+
+```bash
+# Install as a Pi package
+pi install npm:pi-1password
+
+# Or install manually via npm:
+npm install -g pi-1password
+```
+
+This gives you access to the following skills and extensions in Pi:
+1. **`1password-cli`**: General 1Password CLI integration and secret management.
+2. **`ssh-agent`**: SSH key management with keychain and 1Password passphrases.
+3. **`1password-env`**: Advanced environment management extension for the Pi coding agent.
+
+### Part 2: System Setup (SSH & CLI Tools)
+
+If you want to set up SSH Agent integration and CLI tools on your machine, clone this repository and run the install script:
+
+```bash
+git clone https://github.com/kylebrodeur/1password-ssh-setup.git
+cd 1password-ssh-setup
+./install.sh
+```
+
+See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions.
 
 ## Components
 
@@ -156,7 +207,7 @@ export GITHUB_TOKEN="op://Personal/GitHub/token"
 ## Requirements
 
 - 1Password CLI (`op`) installed
-- 1Password Service Account (REQUIRED - see [docs/SETUP.md](docs/SETUP.md) for setup)
+- 1Password User Account (`eval $(op signin) -f`) OR Service Account
 - `keychain` for SSH agent management (Linux/WSL)
 - Pi (for extension)
 
