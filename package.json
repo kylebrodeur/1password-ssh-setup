@@ -31,8 +31,8 @@
       "path": "skills/ssh-agent"
     },
     {
-      "name": "pi-extension",
-      "path": "skills/pi-extension"
+      "name": "1password-env",
+      "path": "skills/1password-env"
     }
   ],
   "files": [

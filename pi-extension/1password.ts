@@ -14,8 +14,15 @@
  * - Status bar indicator for 1Password connection
  *
  * Environment Loading Order (cascading, later overrides earlier):
- *   1. User level: ~/.config/op-ssh/.env.1pass
+ *   1. User level: ~/.config/op-ssh/.env.1pass or ~/.pi/.env
  *   2. Project level: ./.env.1pass (or specified via --op-env)
+ *   3. Supports both .env and .env.1pass formats
+ *
+ * Configuration:
+ *   - Pi extension loads from ~/.pi/.env if it contains 1Password references
+ *   - Set Pi setting `op.envFile` to specify custom env file
+ *   - Set Pi setting `op.noUserEnv` to disable user-level loading
+ *   - Set Pi setting `op.quiet` to hide status notifications
  *
  * Requires: 1Password CLI (op) to be installed and authenticated
  */
@@ -32,9 +39,11 @@ import { Type } from "@sinclair/typebox";
 const execAsync = promisify(exec);
 
 // Configuration paths
-const USER_CONFIG_DIR = resolve(homedir(), ".config/op-ssh");
+const HOME_DIR = homedir();
+const USER_CONFIG_DIR = resolve(HOME_DIR, ".config/op-ssh");
 const USER_ENV_FILE = resolve(USER_CONFIG_DIR, ".env.1pass");
 const PROJECT_ENV_FILE = ".env.1pass";
+const PI_ENV_FILE = resolve(HOME_DIR, ".pi/.env");
 
 // Type definitions for tool results
 interface OpSecretDetails {
@@ -653,6 +662,21 @@ export default function (pi: ExtensionAPI) {
     
     const skipUser = pi.getFlag("op-no-user") as boolean;
     const explicitEnvFile = pi.getFlag("op-env") as string | undefined;
+    
+    // Step 0: Try to load from Pi .env if it exists (can be 1Password refs or plain)
+    if (existsSync(PI_ENV_FILE)) {
+      try {
+        const { env: piEnv, loaded: piLoaded } = await loadEnvFile(PI_ENV_FILE, "user");
+        if (piLoaded > 0) {
+          for (const [key, value] of Object.entries(piEnv)) {
+            process.env[key] = value;
+            envState.vars[key] = { value, source: "user" };
+          }
+        }
+      } catch {
+        // Silent fail for Pi .env
+      }
+    }
     
     // Step 1: Load user-level env (unless --op-no-user)
     if (!skipUser && existsSync(USER_ENV_FILE)) {
