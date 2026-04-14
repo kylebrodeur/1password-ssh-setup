@@ -184,8 +184,29 @@ install_pi_extension() {
     echo ""
 }
 
-# Update shell config
+# Main
+main() {
+    local auto_yes=false
+    if [[ "$1" == "-y" ]]; then
+        auto_yes=true
+        shift
+    fi
+
+    check_prereqs
+    setup_dirs
+    install_ssh_scripts
+    install_cli_tool
+    install_helpers
+    install_pi_extension
+    
+    # Pass auto_yes to update_shell_config
+    update_shell_config "$auto_yes"
+    
+    print_summary
+}
+
 update_shell_config() {
+    local auto_yes=$1
     echo "Checking shell configuration..."
     
     local shell_rc=""
@@ -221,8 +242,13 @@ update_shell_config() {
     fi
     
     echo ""
-    read -p "Add SSH setup to $shell_rc? [Y/n] " -n 1 -r
-    echo ""
+    if [ "$auto_yes" = true ]; then
+        echo "Auto-confirming shell configuration update..."
+        REPLY="Y"
+    else
+        read -p "Add SSH setup to $shell_rc? [Y/n] " -n 1 -r
+        echo ""
+    fi
     
     if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
         cat << EOF >> "$shell_rc"
@@ -247,40 +273,3 @@ EOF
     echo ""
 }
 
-# Print summary
-print_summary() {
-    echo "==================================="
-    echo "Installation Complete"
-    echo "==================================="
-    echo ""
-    echo "Installed components:"
-    echo "  SSH Scripts:     $SSH_DIR/"
-    echo "  CLI Tool:        $BIN_DIR/op-reference"
-    echo "  Config Dir:      $CONFIG_DIR/"
-    echo "  Pi Extension:    $PI_EXT_DIR/1password.ts"
-    echo ""
-    echo "IMPORTANT: Service Account Required"
-    echo "  1. Create Service Account at: https://op.serviceaccounts.1password.com"
-    echo "  2. Add token to ~/.zshrc: export OP_SERVICE_ACCOUNT_TOKEN=\"your-token-here\""
-    echo "  3. Run 'source ~/.zshrc' to apply"
-    echo "  4. Configure 1Password reference in ~/.ssh/askpass-1password.sh"
-    echo "  5. In Pi, run: /reload, then: /op-status"
-    echo ""
-    echo "Documentation:"
-    echo "  docs/SETUP.md"
-    echo ""
-}
-
-# Main
-main() {
-    check_prereqs
-    setup_dirs
-    install_ssh_scripts
-    install_cli_tool
-    install_helpers
-    install_pi_extension
-    update_shell_config
-    print_summary
-}
-
-main "$@"
