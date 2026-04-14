@@ -314,3 +314,65 @@ rm ~/.pi/agent/extensions/1password.ts
 
 Based on the excellent guide by Bas Nijholt:
 [https://www.nijho.lt/post/ssh-1password-funtoo-keychain/](https://www.nijho.lt/post/ssh-1password-funtoo-keychain/)
+
+##Pi Commands
+
+The Pi extension provides the following commands:
+
+### `/op-status`
+Check 1Password authentication and loaded environment variables.
+
+### `/op-env`
+Load project environment from `.env.1pass`.
+- Arguments: optional file name
+- Autocomplete: `.env.1pass`, `.env.local.1pass`, etc.
+
+### `/op-env-user`
+Load user-level environment from `~/.config/op-ssh/.env.1pass`.
+
+### `/op-get op://...`
+Get a specific secret by reference.
+
+### `/op-create-env [filename]`
+Create a project-level environment file with template.
+- Creates `.env.1pass` with common API key references
+- Template includes: `GITHUB_TOKEN`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+
+### `/op-add-item VAR_NAME op://...`
+Add a 1Password secret reference to project env.
+
+Examples:
+```bash
+/op-add-item OPENAI_API_KEY op://Private/API-Keys/openai
+/op-add-item DATABASE_URL op://Work/Database/prod
+```
+
+### `/op-list`
+List all loaded environment variables with sources.
+
+### `/op-config`
+Open the config directory and show user env file.
+
+## Environment Files
+
+### Format
+
+**Project-Level (`.env.1pass`)**
+```
+# Format: export VAR="op://vault/item/field"
+export OPENAI_API_KEY="op://Private/API-Keys/openai"
+export DATABASE_URL="op://Work/Database/prod"
+```
+
+**User-Level (same format)**
+```
+# ~/.config/op-ssh/.env.1pass
+export OPENAI_API_KEY="op://Private/API-Keys/openai"
+```
+
+**Note:** Use `export` in `.env.1pass` files for consistency with `.env` parsing. The extension handles both formats.
+
+### Cascade Order
+1. `~/.pi/.env` (Pi-level, if present)
+2. `~/.config/op-ssh/.env.1pass` (user-level)
+3. `./.env.1pass` (project-level, overrides user)

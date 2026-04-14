@@ -635,6 +635,117 @@ export default function (pi: ExtensionAPI) {
   });
 
   // ============================================================
+  // Command: /op-create-env - Create project-level .env file
+  // ============================================================
+  pi.registerCommand("op-create-env", {
+    description: "Create a project-level .env.1pass file with template",
+    handler: async (args, ctx) => {
+      const fileName = args || ".env.1pass";
+      const filePath = resolve(ctx.cwd, fileName);
+      
+      if (existsSync(filePath)) {
+        ctx.ui.notify(`File already exists: ${filePath}`, "warning");
+        ctx.ui.notify("Edit manually or use /op-add-item to add secrets", "info");
+        return;
+      }
+      
+      const template = `# Project-level 1Password Environment
+# Name: ${fileName}
+# Location: ${filePath}
+#
+# These variables override user-level environment from ~/.config/op-ssh/.env.1pass
+# Format: KEY=op://vault/item/field  OR  KEY=plain-value
+
+# 1Password Secret References (op:// vault/item/field)
+export GITHUB_TOKEN="op://Personal/GitHub/token"
+export OPENAI_API_KEY="op://Private/API-Keys/openai"
+export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+
+# Database connections
+# export DATABASE_URL="op://Work/Database/prod"
+
+# Cloud providers
+# export AWS_ACCESS_KEY_ID="op://Private/AWS/access-key-id"
+# export AWS_SECRET_ACCESS_KEY="op://Private/AWS/secret-access-key"
+
+# Custom project secrets
+# export PROJECT_API_KEY="op://Work/ProjectX/api-key"
+`;
+      
+      writeFileSync(filePath, template, { mode: 0o600 });
+      ctx.ui.notify(`Created project environment: ${filePath}`, "success");
+      ctx.ui.notify("Edit the file and add your 1Password secret references", "info");
+    },
+  });
+
+  // ============================================================
+  // Command: /op-add-item - Add a 1Password item reference
+  // ============================================================
+  pi.registerCommand("op-add-item", {
+    description: "Add a 1Password secret reference to the current project env",
+    getArgumentCompletions: (_prefix: string): AutocompleteItem[] | null => {
+      const commonItems = [
+        "GITHUB_TOKEN",
+        "OPENAI_API_KEY",
+        "ANTHROPIC_API_KEY",
+        "GOOGLE_GENERATIVE_AI_API_KEY",
+        "HUGGINGFACE_API_TOKEN"
+      ];
+      return commonItems.map(item => ({ value: item, label: item }));
+    },
+    handler: async (args, ctx) => {
+      if (!args) {
+        ctx.ui.notify("Usage: /op-add-item VAR_NAME op://vault/item/field", "error");
+        ctx.ui.notify("Example: /op-add-item OPENAI_API_KEY op://Private/API-Keys/openai", "info");
+        return;
+      }
+      
+      const parts = args.trim().split(/\s+/);
+      let varName = parts[0].toUpperCase();
+      
+      while (varName.length > 0 && /[^A-Z0-9_]/.test(varName[varName.length - 1])) {
+        varName = varName.slice(0, -1);
+      }
+      
+      let reference = parts.slice(1).join(" ").replace(/["']/g, "");
+      
+      if (!reference) {
+        ctx.ui.notify(`No reference provided for ${varName}`, "warning");
+        ctx.ui.notify("Format: op://vault/item/field", "info");
+        ctx.ui.notify("Examples:", "info");
+        ctx.ui.notify("  op://Private/API-Keys/openai", "info");
+        ctx.ui.notify("  op://Personal/GitHub/token", "info");
+        ctx.ui.notify("  op://Work/Database/prod", "info");
+        return;
+      }
+      
+      if (!reference.startsWith("op://")) {
+        ctx.ui.notify(`Invalid reference format: ${reference}. Must start with 'op://'`, "error");
+        return;
+      }
+      
+      const projectEnvPath = resolve(ctx.cwd, ".env.1pass");
+      let envLines = existsSync(projectEnvPath) 
+        ? readFileSync(projectEnvPath, "utf8").split("\n") 
+        : [];
+      
+      envLines = envLines.filter(line => {
+        const match = line.match(/^export\s+\w+/);
+        if (match) {
+          const key = match[0].replace(/^export\s+/, "");
+          return key !== varName;
+        }
+        return true;
+      });
+      
+      envLines.push(`export ${varName}="${reference}"`);
+      writeFileSync(projectEnvPath, envLines.join("\n") + "\n", { mode: 0o600 });
+      ctx.ui.notify(`Added ${varName} to ${projectEnvPath}`, "success");
+      ctx.ui.notify(`Reference: ${reference}`, "info");
+    },
+  });
+
+  // ============================================================
   // Event Handlers
   // ============================================================
 
