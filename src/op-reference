@@ -143,19 +143,19 @@ cmd_template() {
 # Usage: eval $(op-reference env .env.1pass)
 
 # API Keys - replace with your actual references
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
-export GITHUB_TOKEN="op://Private/GitHub/token"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+GITHUB_TOKEN="op://Private/GitHub/token"
 
 # SSH Keys
-export SSH_KEY_PASSPHRASE="op://Private/PEGASUS-SSH/password"
+SSH_KEY_PASSPHRASE="op://Private/PEGASUS-SSH/password"
 
 # Database connections
-export DATABASE_URL="op://Private/Database/production"
+DATABASE_URL="op://Private/Database/production"
 
 # Cloud providers
-export AWS_ACCESS_KEY_ID="op://Private/AWS/access-key-id"
-export AWS_SECRET_ACCESS_KEY="op://Private/AWS/secret-access-key"
+AWS_ACCESS_KEY_ID="op://Private/AWS/access-key-id"
+AWS_SECRET_ACCESS_KEY="op://Private/AWS/secret-access-key"
 EOF
 
     echo -e "${GREEN}Created template:${NC} $template_file"

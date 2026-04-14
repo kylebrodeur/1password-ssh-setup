@@ -187,11 +187,11 @@ Edit `~/.config/op-ssh/.env.1pass`:
 
 ```bash
 # SSH passphrase (required)
-export SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
+SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
 
 # Personal API keys
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export GITHUB_TOKEN="op://Personal/GitHub/token"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+GITHUB_TOKEN="op://Personal/GitHub/token"
 ```
 
 ### Project-Level Environment
@@ -200,10 +200,10 @@ Create `./.env.1pass` in project root:
 
 ```bash
 # Project-specific API keys
-export PROJECT_API_KEY="op://Work/ProjectX/token"
+PROJECT_API_KEY="op://Work/ProjectX/token"
 
 # Override user keys for this project
-export OPENAI_API_KEY="op://Work/OpenAI/prod-key"
+OPENAI_API_KEY="op://Work/OpenAI/prod-key"
 ```
 
 ---

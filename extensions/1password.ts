@@ -200,14 +200,14 @@ function createUserTemplate(): void {
 # Place global secrets here that apply to all projects
 
 # Example: Global API keys that don't change per project
-# export OPENAI_API_KEY="op://Private/API-Keys/openai"
-# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# OPENAI_API_KEY="op://Private/API-Keys/openai"
+# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
 
 # Example: Personal GitHub token
-# export GITHUB_TOKEN="op://Personal/GitHub/token"
+# GITHUB_TOKEN="op://Personal/GitHub/token"
 
 # SSH Key (used by askpass script)
-export SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
+SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
 `;
     writeFileSync(USER_ENV_FILE, template, { mode: 0o600 });
   }
@@ -657,19 +657,19 @@ export default function (pi: ExtensionAPI) {
 # Format: KEY=op://vault/item/field  OR  KEY=plain-value
 
 # 1Password Secret References (op:// vault/item/field)
-export GITHUB_TOKEN="op://Personal/GitHub/token"
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+GITHUB_TOKEN="op://Personal/GitHub/token"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
 
 # Database connections
-# export DATABASE_URL="op://Work/Database/prod"
+# DATABASE_URL="op://Work/Database/prod"
 
 # Cloud providers
-# export AWS_ACCESS_KEY_ID="op://Private/AWS/access-key-id"
-# export AWS_SECRET_ACCESS_KEY="op://Private/AWS/secret-access-key"
+# AWS_ACCESS_KEY_ID="op://Private/AWS/access-key-id"
+# AWS_SECRET_ACCESS_KEY="op://Private/AWS/secret-access-key"
 
 # Custom project secrets
-# export PROJECT_API_KEY="op://Work/ProjectX/api-key"
+# PROJECT_API_KEY="op://Work/ProjectX/api-key"
 `;
       
       writeFileSync(filePath, template, { mode: 0o600 });
@@ -769,12 +769,12 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
         const template = `# Global 1Password Environment
 # Located at: ${filePath}
 # These variables are loaded automatically on Pi session start
-# Format: export VAR="op://vault/item/field"
+# Format: VAR="op://vault/item/field"
 
 # API Keys
-# export OPENAI_API_KEY="op://Private/API-Keys/openai"
-# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
-# export GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
+# OPENAI_API_KEY="op://Private/API-Keys/openai"
+# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
 `;
         writeFileSync(USER_CONFIG_DIR, { mode: 0o600 });
       }
@@ -786,25 +786,25 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
       
       // Remove existing entry if present (smart update)
       const oldLine = envLines.find(line => {
-        const match = line.match(/^export\s+\w+/);
+        const match = line.match(/^(?:export\s+)?\w+/);
         if (match) {
-          const key = match[0].replace(/^export\s+/, "");
+          const key = match[0].replace(/^(?:export\s+)?/, "");
           return key === varName;
         }
         return false;
       });
       
       envLines = envLines.filter(line => {
-        const match = line.match(/^export\s+\w+/);
+        const match = line.match(/^(?:export\s+)?\w+/);
         if (match) {
-          const key = match[0].replace(/^export\s+/, "");
+          const key = match[0].replace(/^(?:export\s+)?/, "");
           return key !== varName;
         }
         return true;
       });
       
       // Add new line
-      envLines.push(`export ${varName}="${reference}"`);
+      envLines.push(`${varName}="${reference}"`);
       writeFileSync(filePath, envLines.join("\n") + "\n", { mode: 0o600 });
       
       if (oldLine) {
@@ -890,12 +890,12 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
         const template = `# Global 1Password Environment
 # Located at: ${USER_ENV_FILE}
 # These variables are loaded automatically on Pi session start
-# Format: export VAR="op://vault/item/field"
+# Format: VAR="op://vault/item/field"
 
 # API Keys
-# export OPENAI_API_KEY="op://Private/API-Keys/openai"
-# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
-# export GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
+# OPENAI_API_KEY="op://Private/API-Keys/openai"
+# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# GOOGLE_GENERATIVE_AI_API_KEY="op://Private/API-Keys/google-ai"
 `;
         writeFileSync(USER_ENV_FILE, template, { mode: 0o600 });
         ctx.ui.notify(`Created global env file: ${USER_ENV_FILE}`, "info");
@@ -906,25 +906,25 @@ export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
       
       // Remove existing entry if present (smart update)
       const oldLine = envLines.find(line => {
-        const match = line.match(/^export\s+\w+/);
+        const match = line.match(/^(?:export\s+)?\w+/);
         if (match) {
-          const key = match[0].replace(/^export\s+/, "");
+          const key = match[0].replace(/^(?:export\s+)?/, "");
           return key === varName;
         }
         return false;
       });
       
       envLines = envLines.filter(line => {
-        const match = line.match(/^export\s+\w+/);
+        const match = line.match(/^(?:export\s+)?\w+/);
         if (match) {
-          const key = match[0].replace(/^export\s+/, "");
+          const key = match[0].replace(/^(?:export\s+)?/, "");
           return key !== varName;
         }
         return true;
       });
       
       // Add new line
-      envLines.push(`export ${varName}="${reference}"`);
+      envLines.push(`${varName}="${reference}"`);
       writeFileSync(USER_ENV_FILE, envLines.join("\n") + "\n", { mode: 0o600 });
       
       if (oldLine) {

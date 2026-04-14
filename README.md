@@ -200,8 +200,8 @@ OP_SECRET_REFERENCE="op://Employee/pegasus-ssh/password"
 
 Add to `~/.config/op-ssh/.env.1pass`:
 ```bash
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export GITHUB_TOKEN="op://Personal/GitHub/token"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+GITHUB_TOKEN="op://Personal/GitHub/token"
 ```
 
 ## Requirements
@@ -210,11 +210,6 @@ export GITHUB_TOKEN="op://Personal/GitHub/token"
 - 1Password User Account (`eval $(op signin) -f`) OR Service Account
 - `keychain` for SSH agent management (Linux/WSL)
 - Pi (for extension)
-
-## Secret Gist
-
-This project is backed up at:
-https://gist.github.com/kylebrodeur/d28d6b39387b00de180aedcda90a089b
 
 ## License
 
