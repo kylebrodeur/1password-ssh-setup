@@ -1,0 +1,144 @@
+---
+name: 1password-cli
+description: "1Password CLI integration for managing secrets, API keys, and service accounts. Use when working with 1Password in Linux/WSL/Windows environments. Supports Service Account authentication for AI agents, CI/CD, and automated workflows."
+---
+
+# 1Password CLI Skill
+
+## Setup
+
+First, create a 1Password Service Account (required for this setup):
+
+1. Go to [https://op.serviceaccounts.1password.com](https://op.serviceaccounts.1password.com)
+2. Sign in to your 1Password account
+3. Click "Create Service Account"
+4. Name it (e.g., "pi-agent") and copy the Service Account Token
+
+Add to your shell config (`~/.zshrc` or `~/.bashrc`):
+
+```bash
+# --- 1Password Service Account ---
+export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
+# ---------------------------------
+```
+
+Reload your shell:
+```bash
+source ~/.zshrc
+```
+
+Verify setup:
+```bash
+op account list
+```
+
+## Features
+
+### CLI Tool: `op-reference`
+
+Manage 1Password secret references:
+```bash
+op-reference check           # Verify 1Password CLI authentication
+op-reference list            # List available vaults and items
+op-reference get "op://..."  # Get secret value by reference
+op-reference copy "op://..." # Copy reference to clipboard
+op-reference add NAME REF   # Save named reference
+op-reference env FILE       # Load .env.1pass with references resolved
+```
+
+### Environment Files
+
+Use `.env.1pass` files with secret references:
+```bash
+# User-level: ~/.config/op-ssh/.env.1pass
+# Project-level: ./.env.1pass (in project root)
+
+# Format:
+export OPENAI_API_KEY="op://Private/API-Keys/openai"
+export DATABASE_URL="op://Work/Database/prod"
+```
+
+### Secret Reference Syntax
+
+Format: `op://vault/item/field`
+- `op://Private/API-Keys/openai`
+- `op://Work/Database/production`
+
+## Usage with AI Agents
+
+### Automatic Loading
+
+The Pi extension automatically loads:
+1. User-level: `~/.config/op-ssh/.env.1pass`
+2. Project-level: `./.env.1pass` (overrides user)
+
+### Pi Commands
+
+- `/op-status` - Check authentication and loaded variables
+- `/op-env` - Load project environment
+- `/op-env-user` - Load user environment
+- `/op-get op://...` - Get a specific secret
+- `/op-list` - Show loaded variables
+
+### Custom Tool: `op_get_secret`
+
+Retrieve secrets by reference without exposing them in context:
+```json
+{
+  "reference": "op://Private/API-Keys/openai"
+}
+```
+
+## Environment Levels
+
+Configuration follows cascading precedence:
+1. **User Level** (`~/.config/op-ssh/.env.1pass`) - Global secrets
+2. **Project Level** (`./.env.1pass`) - Project-specific, overrides user
+
+## Files and Directories
+
+```
+~/.config/op-ssh/
+├── .env.1pass           # User-level environment
+├── references.conf      # Named references
+└── op-ai-helper.sh      # Helper functions
+
+~/projects/project/
+└── .env.1pass           # Project-level environment (overrides user)
+```
+
+## Troubleshooting
+
+### Service Account Required
+```
+Error: Not signed in to 1Password
+Solution: Set OP_SERVICE_ACCOUNT_TOKEN in ~/.zshrc
+```
+
+### Secret Not Found
+```
+Error: Secret not found: op://...
+Solution: Verify the reference in 1Password: op://vault/item/field
+```
+
+### 1Password CLI Not Found
+```
+Error: 1Password CLI (op) not found
+Solution: Install from https://1password.com/downloads/command-line/
+```
+
+## Advanced: op run for Secret Injection
+
+For applications, use `op run` to inject secrets:
+```bash
+# With environment file
+op run --env-file app.env -- node app.js
+
+# With command-line arguments
+export OPENAI_API_KEY="op://Private/API-Keys/openai"
+op run -- node app.js
+```
+
+## Original Article
+
+Based on: ["Combining Keychain and 1Password CLI for ssh-agent management"](https://www.nijho.lt/post/ssh-1password-funtoo-keychain/) by Bas Nijholt.

@@ -70,9 +70,7 @@ logs/
 tmp/
 temp/
 *.tmp
-# Skills directories (distributed via npm/skills)
-skills/
-pi.skills/
+
 
 # Package files
 node_modules/
