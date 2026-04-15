@@ -285,5 +285,29 @@ EOF
     fi
     
     echo ""
+
+    # Session Manager Config
+    if [ "$auto_yes" = true ]; then
+        REPLY="Y"
+    else
+        echo ""
+        read -p "Enable 1Password session token caching in $shell_rc? (Recommended for WSL/Linux) [Y/n] " -n 1 -r
+        echo ""
+    fi
+
+    if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+        cat << EOF >> "$shell_rc"
+
+# --- 1Password Session Manager ---
+if [[ -f "$CONFIG_DIR/op-session-manager.sh" ]]; then
+  source "$CONFIG_DIR/op-session-manager.sh"
+fi
+# ---------------------------------
+EOF
+        echo -e "${GREEN}Added session manager to $shell_rc${NC}"
+    else
+        echo -e "${YELLOW}Skipped session manager configuration${NC}"
+    fi
+}
 }
 

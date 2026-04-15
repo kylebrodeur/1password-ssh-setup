@@ -6,6 +6,7 @@ node_modules/
 .env
 .env.local
 .env.*.1pass
+.op_session_token
 
 # User config (contains sensitive data)
 .config/op-ssh/.env.1pass

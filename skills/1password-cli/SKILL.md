@@ -1,34 +1,38 @@
 ---
 name: 1password-cli
-description: "1Password CLI integration for managing secrets, API keys, and service accounts. Use when working with 1Password in Linux/WSL/Windows environments. Supports Service Account authentication for AI agents, CI/CD, and automated workflows."
+description: "1Password CLI integration for managing secrets, API keys, and authentication. Use when working with 1Password in Linux/WSL/Windows environments. Supports Service Account authentication, Desktop App integration, and Session Token Caching."
 ---
 
 # 1Password CLI Skill
 
 ## Setup
 
-First, create a 1Password Service Account (required for this setup):
+Choose one of the following authentication methods:
 
+### Option A: Desktop App Integration (Recommended for Local)
+If you have a 1Password Desktop app installed:
+1. Open **Settings $\rightarrow$ Developer $\rightarrow$ Integrate with 1Password CLI**.
+2. No shell config required.
+
+### Option B: Session Token Caching (Best for WSL/Linux)
+If the Desktop bridge doesn't work, use the session manager to avoid repeated password prompts:
+1. Run the installer `./install.sh` and enable "Session Token Caching".
+2. Or manually add to shell config:
+   ```bash
+   source ~/.config/op-ssh/op-session-manager.sh
+   ```
+
+### Option C: Service Account (Best for CI/CD and Headless)
 1. Go to [https://op.serviceaccounts.1password.com](https://op.serviceaccounts.1password.com)
-2. Sign in to your 1Password account
-3. Click "Create Service Account"
-4. Name it (e.g., "pi-agent") and copy the Service Account Token
+2. Create a Service Account and copy the token.
+3. Add to your shell config (`~/.zshrc` or `~/.bashrc`):
+   ```bash
+   export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
+   ```
 
-Add to your shell config (`~/.zshrc` or `~/.bashrc`):
-
-```bash
-# --- 1Password Service Account ---
-export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
-# ---------------------------------
-```
-
-Reload your shell:
+Reload your shell and verify setup:
 ```bash
 source ~/.zshrc
-```
-
-Verify setup:
-```bash
 op account list
 ```
 
