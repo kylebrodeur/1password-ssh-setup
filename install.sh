@@ -117,6 +117,19 @@ install_cli_tool() {
     echo ""
 }
 
+# Install session manager
+install_session_manager() {
+    echo "Installing session manager..."
+    
+    if [ -f "$SRC_DIR/src/op-session-manager.sh" ]; then
+        cp "$SRC_DIR/src/op-session-manager.sh" "$CONFIG_DIR/"
+        chmod +x "$CONFIG_DIR/op-session-manager.sh"
+        echo "  Installed: op-session-manager.sh"
+    fi
+    
+    echo ""
+}
+
 # Install helper files
 install_helpers() {
     echo "Installing helper files..."
@@ -196,6 +209,7 @@ main() {
     setup_dirs
     install_ssh_scripts
     install_cli_tool
+    install_session_manager
     install_helpers
     install_pi_extension
     

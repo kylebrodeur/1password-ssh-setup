@@ -6,17 +6,20 @@ Based on ["Combining Keychain and 1Password CLI for ssh-agent management"](https
 
 ## Authentication Options
 
-This setup supports two authentication methods with 1Password CLI:
+This setup supports three authentication methods with 1Password CLI:
 
-1. **User Account (Interactive)** - Recommended for personal machines
-   ```bash
-   eval $(op signin) -f
-   ```
+1. **User Account (Interactive/App)** - Recommended for personal machines
+   - Use 1Password Desktop App integration for a passwordless experience.
+   - For WSL/Linux without a working bridge, use the built-in **Session Token Caching**.
 
 2. **Service Account (Automated)** - Recommended for CI/CD and isolated agents
    - Non-interactive authentication (no password prompts)
    - Persistent sessions (no expiry issues)
    - Vault-specific access control
+
+3. **Session Token Caching (WSL/Headless)** - Best for personal use on WSL/Linux
+   - Store session tokens locally to avoid repeated password prompts.
+   - Authenticate once; remain signed in until the session expires.
 
 ## Features
 - SSH Agent Integration - Keychain + 1Password for passphrase management

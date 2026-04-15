@@ -1,6 +1,6 @@
-# 1Password SSH Setup - Service Account Edition
+# 1Password SSH Setup - Multi-Auth Edition
 
-> **Note:** This setup requires a 1Password Service Account. Desktop app integration and manual sign-in are NOT supported.
+> **Note:** This setup supports multiple authentication methods: Service Accounts, Desktop App integration, and Session Token Caching.
 
 ## Prerequisites
 
@@ -208,24 +208,24 @@ OPENAI_API_KEY="op://Work/OpenAI/prod-key"
 
 ---
 
-## Modern 1Password Secret Management (Recommended)
+## Three Methods to Work with Secrets
 
-Based on 1Password CLI best practices for Linux and Windows:
+1. **Desktop App Integration (Recommended)**
+   - On Windows/macOS, turn on "Integrate with 1Password CLI" in Settings $\rightarrow$ Developer.
+   - The `op` CLI will use the app's biometric session. No password prompts in terminal.
 
-### Three Methods to Work with Secrets
+2. **Session Token Caching (Best for WSL/Linux)**
+   - If the Desktop App bridge is not working, use the `op-session-manager.sh` helper.
+   - It caches your session token locally, so you only enter your password when the session expires.
+   - To enable: add `source ~/.config/op-ssh/op-session-manager.sh` to your `.zshrc`.
 
-1. **`op read`** - Print secret to stdout or write to file
-   - Best for: Shell scripts, one-off secret retrieval
-   - Example: `op read "op://Vault/Item/field"`
+3. **Service Accounts (Automated/CI)**
+   - Use a dedicated token for non-interactive environments.
+   - Add `export OP_SERVICE_ACCOUNT_TOKEN="your-token"` to your shell config.
 
-2. **`op run`** - Run command with secrets as environment variables
-   - Best for: Application startup with secrets
-   - Example: `op run --env-file app.env -- node app.js`
-   - Recommended method for modern workflows
+### Recommended Workflow
 
-3. **`op inject`** - Inject secrets into configuration files
-   - Best for: Preparing config files with secrets
-   - Example: `cat config.yml.tpl | op inject -o config.yml`
+For Linux/Windows development, use **`op run`** with environment files:
 
 ### Recommended Workflow
 
