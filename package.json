@@ -1,6 +1,6 @@
 {
   "name": "pi-1password",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "1Password SSH Setup - SSH agent integration and Pi coding agent secret management",
   "main": "extensions/1password.ts",
   "scripts": {
@@ -21,8 +21,12 @@
     "url": "https://github.com/kylebrodeur/1password-ssh-setup.git"
   },
   "pi": {
-    "extensions": ["extensions"],
-    "skills": ["skills"]
+    "extensions": [
+      "extensions"
+    ],
+    "skills": [
+      "skills"
+    ]
   },
   "files": [
     "install.sh",
