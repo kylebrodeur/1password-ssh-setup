@@ -151,12 +151,19 @@ cp examples/env.1pass.template ~/.config/op-ssh/
 
 ### Update Shell Config
 
-Add to `~/.zshrc` (or `~/.bashrc`):
+Add to `~/.zshrc` (or `~/.bashrc`). **Note: Order is important!** The session manager must be loaded before the SSH setup if you are using Session Token caching.
 
 ```bash
 # --- 1Password Service Account ---
 export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
 # -------------------------------------
+
+# --- 1Password Session Manager (Optional, see below) ---
+# MUST be placed before SSH setup
+if [[ -f "$HOME/.config/op-ssh/op-session-manager.sh" ]]; then
+  source "$HOME/.config/op-ssh/op-session-manager.sh"
+fi
+# -------------------------------------------------------
 
 # --- SSH KEYCHAIN WITH 1PASSWORD ---
 _ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"

@@ -1,0 +1,16 @@
+{
+  "nextId": 4,
+  "tasks": [
+    {
+      "id": "3",
+      "subject": "Release new version",
+      "description": "Remove the failing bash test script, bump version, pack the release, commit/push the changes, and publish the package.",
+      "status": "in_progress",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776308154918,
+      "updatedAt": 1776308213900
+    }
+  ]
+}

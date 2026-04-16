@@ -270,14 +270,6 @@ update_shell_config() {
 # --- 1Password Service Account ---
 export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
 # ---------------------------------
-
-# --- 1Password SSH Setup ---
-export PATH="$BIN_DIR:\$PATH"
-_ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"
-if [[ -f "\$_ssh_setup_script" ]]; then
-  source "\$_ssh_setup_script"
-fi
-# ---------------------------
 EOF
         echo -e "${GREEN}Added to $shell_rc${NC}"
     else
@@ -299,6 +291,7 @@ EOF
         cat << EOF >> "$shell_rc"
 
 # --- 1Password Session Manager ---
+# Must be loaded BEFORE SSH setup so askpass helper is authenticated
 if [[ -f "$CONFIG_DIR/op-session-manager.sh" ]]; then
   source "$CONFIG_DIR/op-session-manager.sh"
 fi
@@ -308,6 +301,20 @@ EOF
     else
         echo -e "${YELLOW}Skipped session manager configuration${NC}"
     fi
+
+    if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+        cat << EOF >> "$shell_rc"
+
+# --- 1Password SSH Setup ---
+export PATH="$BIN_DIR:\$PATH"
+_ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"
+if [[ -f "\$_ssh_setup_script" ]]; then
+  source "\$_ssh_setup_script"
+fi
+# ---------------------------
+EOF
+        echo -e "${GREEN}Added SSH setup to $shell_rc${NC}"
+    fi
 }
-}
+
 
