@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # ~/.ssh/askpass-1password.sh
 # Provides the SSH key passphrase from 1Password CLI via SSH_ASKPASS
 # 
