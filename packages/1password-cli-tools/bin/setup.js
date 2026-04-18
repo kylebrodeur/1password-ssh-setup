@@ -93,7 +93,7 @@ async function main() {
       message: 'Paste the 1Password secret reference for your SSH key passphrase:',
       placeholder: 'op://Private/my-ssh-key/password',
       defaultValue: 'op://Private/my-ssh-key/password',
-    }) as string;
+    });
 
     if (p.isCancel(sshRef)) {
       p.cancel('Operation cancelled.');
@@ -136,7 +136,7 @@ SSH_KEY_PASSPHRASE="\${sshRef}"
         { value: 'NODE_AUTH_TOKEN', label: 'NPM Automation Token' },
       ],
       required: false,
-    }) as string[];
+    });
 
     if (p.isCancel(keys)) {
       p.cancel('Operation cancelled.');

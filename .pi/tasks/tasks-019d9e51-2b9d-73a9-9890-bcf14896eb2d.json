@@ -1,4 +1,27 @@
 {
-  "nextId": 8,
-  "tasks": []
+  "nextId": 10,
+  "tasks": [
+    {
+      "id": "8",
+      "subject": "Final workspace sync and push",
+      "description": "Ensure workspace versions are perfectly synced at 0.3.0, check for any uncommitted changes, and push the final state to GitHub so the user can publish to npm.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776533896585,
+      "updatedAt": 1776534016746
+    },
+    {
+      "id": "9",
+      "subject": "Save TODO.md checklist",
+      "description": "Create a TODO.md file with the step-by-step checklist for configuring the NPM token, testing the local packages, and publishing to NPM.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776537293625,
+      "updatedAt": 1776537414102
+    }
+  ]
 }
