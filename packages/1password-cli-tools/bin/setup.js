@@ -103,7 +103,7 @@ async function main() {
     const askpassPath = path.join(SSH_DIR, 'askpass-1password.sh');
     if (fs.existsSync(askpassPath)) {
       let content = fs.readFileSync(askpassPath, 'utf8');
-      content = content.replace(/OP_SECRET_REFERENCE=".*"/, \`OP_SECRET_REFERENCE="\${sshRef}"\`);
+      content = content.replace(/OP_SECRET_REFERENCE=".*"/, `OP_SECRET_REFERENCE="${sshRef}"`);
       fs.writeFileSync(askpassPath, content);
     }
   }
@@ -118,13 +118,13 @@ async function main() {
     process.exit(0);
   }
 
-  let envContent = \`# User-level 1Password Environment Variables
+  let envContent = `# User-level 1Password Environment Variables
 # Located at: ~/.config/op-ssh/.env.1pass
 
 # SSH Keys
-SSH_KEY_PASSPHRASE="\${sshRef}"
+SSH_KEY_PASSPHRASE="${sshRef}"
 
-\`;
+`;
 
   if (configureEnv) {
     const keys = await p.multiselect({
@@ -145,8 +145,8 @@ SSH_KEY_PASSPHRASE="\${sshRef}"
 
     for (const key of keys) {
       const ref = await p.text({
-        message: \`Paste the secret reference for \${key}:\`,
-        placeholder: \`op://Private/API-Keys/\${key.toLowerCase().replace('_api_key', '')}\`,
+        message: `Paste the secret reference for ${key}:`,
+        placeholder: `op://Private/API-Keys/${key.toLowerCase().replace('_api_key', '')}`,
       });
 
       if (p.isCancel(ref)) {
@@ -154,7 +154,7 @@ SSH_KEY_PASSPHRASE="\${sshRef}"
         process.exit(0);
       }
 
-      envContent += \`\${key}="\${ref}"\\n\`;
+      envContent += `${key}="${ref}"\n`;
     }
   }
 
@@ -176,13 +176,13 @@ SSH_KEY_PASSPHRASE="\${sshRef}"
       ? path.join(HOME_DIR, '.zshrc')
       : path.join(HOME_DIR, '.bashrc');
 
-    let rcContent = \`\\n# --- 1Password Session Manager ---\\n\`;
-    rcContent += \`if [[ -f "\${CONFIG_DIR}/op-session-manager.sh" ]]; then\\n\`;
-    rcContent += \`  source "\${CONFIG_DIR}/op-session-manager.sh"\\n\`;
-    rcContent += \`fi\\n\`;
+    let rcContent = `\n# --- 1Password Session Manager ---\n`;
+    rcContent += `if [[ -f "${CONFIG_DIR}/op-session-manager.sh" ]]; then\n`;
+    rcContent += `  source "${CONFIG_DIR}/op-session-manager.sh"\n`;
+    rcContent += `fi\n`;
     
-    rcContent += \`\\n# --- 1PASSWORD CLI HELPERS ---\\n\`;
-    rcContent += \`opon() {
+    rcContent += `\n# --- 1PASSWORD CLI HELPERS ---\n`;
+    rcContent += `opon() {
   if ! op vault list >/dev/null 2>&1; then
     if [[ -f ~/.config/op-ssh/op-session-manager.sh ]]; then
       source ~/.config/op-ssh/op-session-manager.sh
@@ -205,19 +205,19 @@ getpwd() {
 getmfa() {
   opon
   op item get "$1" --otp
-}\\n\`;
+}\n`;
 
     if (enableSSH) {
-      rcContent += \`\\n# --- 1Password SSH Setup ---\\n\`;
-      rcContent += \`export PATH="\${BIN_DIR}:\\$PATH"\\n\`;
-      rcContent += \`_ssh_setup_script="\${HOME}/.ssh/setup_ssh_agent.sh"\\n\`;
-      rcContent += \`if [[ -f "\\$_ssh_setup_script" ]]; then\\n\`;
-      rcContent += \`  source "\\$_ssh_setup_script"\\n\`;
-      rcContent += \`fi\\n\`;
+      rcContent += `\n# --- 1Password SSH Setup ---\n`;
+      rcContent += `export PATH="${BIN_DIR}:$PATH"\n`;
+      rcContent += `_ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"\n`;
+      rcContent += `if [[ -f "$_ssh_setup_script" ]]; then\n`;
+      rcContent += `  source "$_ssh_setup_script"\n`;
+      rcContent += `fi\n`;
     }
 
     fs.appendFileSync(shellRcPath, rcContent);
-    p.log.success(\`Added shell configuration to \${shellRcPath}\`);
+    p.log.success(`Added shell configuration to ${shellRcPath}`);
   }
 
   p.outro(pc.bgGreen(pc.white(' Setup Complete! Please reload your terminal or run: source ~/.zshrc ')));
