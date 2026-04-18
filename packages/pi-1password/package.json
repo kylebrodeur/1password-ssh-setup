@@ -33,7 +33,7 @@
     "package.json"
   ],
   "dependencies": {
-    "1password-cli-tools": "workspace:*"
+    "1password-cli-tools": "^0.3.0"
   },
   "publishConfig": {
     "access": "public"

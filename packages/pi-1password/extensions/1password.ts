@@ -27,7 +27,7 @@
  * Requires: 1Password CLI (op) to be installed and authenticated
  */
 
-import { exec } from "node:child_process";
+import { exec, execSync } from "node:child_process";
 import { promisify } from "node:util";
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";

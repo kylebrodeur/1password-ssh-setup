@@ -28,23 +28,19 @@ This setup supports three authentication methods with 1Password CLI:
 - **Pi Extension** - Native 1Password tools and commands in Pi
 - **Cascading Environment** - User-level and project-level `.env.1pass` files
 - **CLI Tools** - `op-reference` for shell scripts and automation
-- **Platform Support** - Works on WSL and native Windows
+- **Platform Support** - Designed for Linux, macOS, and WSL2 (Native Windows not officially supported)
 - **Flexible Auth** - Supports both Service Accounts and standard `op signin`
 
 ## Platform-Specific Setup
 
-This setup supports two platforms:
+This setup relies on UNIX-like environments and tools (like `keychain`). 
 
-### WSL (Windows Subsystem for Linux)
-- 1Password CLI handles authentication (Service Account or `op signin`)
-- Desktop app still needed for ssh-agent socket (if using SSH key management)
+### Supported Environments:
+- **macOS** (Native)
+- **Linux** (Native)
+- **WSL2** (Windows Subsystem for Linux)
 
-### Native Windows
-- 1Password CLI handles authentication
-- Windows native SSH client can use 1Password agent socket
-- Desktop app required for ssh-agent socket functionality
-
-Both platforms support the same secret references from 1Password vaults.
+*Note: Native Windows (PowerShell/CMD) is not officially supported by these bash scripts or the CLI setup wizard.*
 
 ### Authentication Setup
 

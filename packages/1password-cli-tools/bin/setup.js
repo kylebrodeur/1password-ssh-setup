@@ -72,6 +72,21 @@ function installFiles() {
 
 async function main() {
   p.intro(pc.bgBlue(pc.white(' 1Password CLI & SSH Setup Wizard ')));
+  
+  if (os.platform() === 'win32') {
+    p.log.warn(pc.yellow('Warning: Native Windows is not officially supported.'));
+    p.log.message('This setup is designed for Linux, macOS, and WSL2 environments.');
+    
+    const proceed = await p.confirm({
+      message: 'Do you want to proceed anyway?',
+      initialValue: false,
+    });
+    
+    if (!proceed || p.isCancel(proceed)) {
+      p.cancel('Operation cancelled.');
+      process.exit(0);
+    }
+  }
 
   checkPrereqs();
   setupDirs();
@@ -99,6 +114,9 @@ async function main() {
       p.cancel('Operation cancelled.');
       process.exit(0);
     }
+    
+    // Strip quotes added by 1Password Desktop copy
+    sshRef = sshRef.trim().replace(/^["']|["']$/g, '');
 
     const askpassPath = path.join(SSH_DIR, 'askpass-1password.sh');
     if (fs.existsSync(askpassPath)) {
@@ -153,8 +171,11 @@ SSH_KEY_PASSPHRASE="${sshRef}"
         p.cancel('Operation cancelled.');
         process.exit(0);
       }
+      
+      // Strip quotes
+      const cleanRef = ref.trim().replace(/^["']|["']$/g, '');
 
-      envContent += `${key}="${ref}"\n`;
+      envContent += `${key}="${cleanRef}"\n`;
     }
   }
 
@@ -210,7 +231,7 @@ getmfa() {
     if (enableSSH) {
       rcContent += `\n# --- 1Password SSH Setup ---\n`;
       rcContent += `export PATH="${BIN_DIR}:$PATH"\n`;
-      rcContent += `_ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"\n`;
+      rcContent += `_ssh_setup_script="${HOME_DIR}/.ssh/setup_ssh_agent.sh"\n`;
       rcContent += `if [[ -f "$_ssh_setup_script" ]]; then\n`;
       rcContent += `  source "$_ssh_setup_script"\n`;
       rcContent += `fi\n`;
