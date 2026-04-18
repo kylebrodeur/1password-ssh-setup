@@ -32,7 +32,7 @@ Before publishing, verify the NPM package builds and installs correctly on your 
   ```bash
   cd packages/1password-cli-tools
   npm pack
-  npm install -g ./1password-cli-tools-0.3.0.tgz
+  npm install -g "$PWD/1password-cli-tools-0.3.0.tgz"
   ```
 - [ ] Test the global alias to make sure it works:
   ```bash
@@ -44,7 +44,8 @@ Before publishing, verify the NPM package builds and installs correctly on your 
   ```bash
   cd ../pi-1password
   npm pack
-  pi install ./pi-1password-0.3.0.tgz
+  npm install -g "$PWD/pi-1password-0.3.0.tgz"
+  pi install "$PWD"
   ```
 
 ### Phase 4: Publish to NPM!
