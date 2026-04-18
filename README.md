@@ -72,33 +72,28 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 
 ```
 1password-ssh-setup/
-├── skills/                 # Agent Skills (distribution)
-│   ├── 1password-cli/      # 1Password CLI skill
-│   ├── ssh-agent/          # SSH agent management skill
-│   └── 1password-env/      # Pi environment skill
-├── src/                    # Core scripts
-│   ├── askpass-1password.sh     # SSH_ASKPASS script
-│   ├── setup_ssh_agent.sh       # Keychain initialization
-│   ├── op-reference             # CLI tool
-│   └── platform-check.sh        # OS detection
-├── extensions/             # Pi extension source
-│   └── 1password.ts             # Pi extension code
-├── examples/               # Example configs
-│   └── env.1pass.template       # Environment template
-├── docs/                   # Documentation
-│   └── SETUP.md                 # Detailed setup guide
-├── install.sh              # Installation script for system setup
-├── package.json            # npm package & skills config
-└── README.md               # This file
+├── packages/
+│   ├── 1password-cli-tools/  # System setup & CLI tools
+│   │   ├── bin/setup.js      # Interactive CLI Wizard
+│   │   ├── src/              # Core SSH and session scripts
+│   │   └── package.json
+│   └── pi-1password/         # Pi Agent Extension
+│       ├── extensions/       # Pi extension source
+│       ├── skills/           # Agent Skills
+│       └── package.json
+├── docs/                     # Documentation
+├── pnpm-workspace.yaml       # Monorepo config
+├── package.json              # Workspace package
+└── README.md                 # This file
 ```
 
 ## Installation
 
-This project is divided into two independent parts:
+This project is divided into a monorepo with two independent packages:
 
-### Part 1: Pi Agent Package (Recommended)
+### Part 1: Pi Agent Package (Recommended for Pi Users)
 
-If you just want the Pi extension and skills to manage secrets in your AI coding agent, install the npm package:
+If you want the Pi extension and skills to manage secrets in your AI coding agent, install the npm package:
 
 ```bash
 # Install as a Pi package
@@ -113,14 +108,18 @@ This gives you access to the following skills and extensions in Pi:
 2. **`ssh-agent`**: SSH key management with keychain and 1Password passphrases.
 3. **`1password-env`**: Advanced environment management extension for the Pi coding agent.
 
-### Part 2: System Setup (SSH & CLI Tools)
+### Part 2: System Setup (CLI Wizard & SSH Tools)
 
-If you want to set up SSH Agent integration and CLI tools on your machine, clone this repository and run the install script:
+If you want to set up SSH Agent integration, 24-hour background sessions, and CLI helpers on your machine, install the CLI tools package and run the interactive setup wizard:
 
 ```bash
-git clone https://github.com/kylebrodeur/1password-ssh-setup.git
-cd 1password-ssh-setup
-./install.sh
+# Install the tools globally
+npm install -g 1password-cli-tools
+
+# Run the interactive setup wizard
+op-setup
+# or
+1password-cli-setup
 ```
 
 See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions.

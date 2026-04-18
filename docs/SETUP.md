@@ -77,27 +77,62 @@ op account list
 
 ## Installation
 
-### Step 1: Run the Installer
+### Step 1: Run the Interactive Setup Wizard
+
+Install the CLI tools package globally and run the interactive setup wizard:
 
 ```bash
-chmod +x install.sh
-./install.sh
+# Install the tools globally
+npm install -g 1password-cli-tools
+
+# Run the interactive setup wizard
+op-setup
+# or
+1password-cli-setup
 ```
 
-This will:
+The wizard will interactively:
+- Ask if you want to enable SSH Agent integration
+- Prompt you for your SSH passphrase 1Password reference
+- Help you configure your global API keys (OpenAI, Anthropic, GitHub, NPM)
 - Copy SSH scripts to `~/.ssh/`
-- Install CLI tool to `~/.local/bin/`
-- Create `~/.config/op-ssh/` directory
-- Install Pi extension
-- Add keychain config to `.zshrc` (or `.bashrc`)
+- Install CLI tools to `~/.local/bin/`
+- Configure `~/.config/op-ssh/` directory
+- Add the 24-hour background session caching to your shell config
 
-### Step 2: Configure 1Password Secret Reference
+### Step 2: Reload Shell Configuration
+
+```bash
+source ~/.zshrc
+```
+
+### Step 3: Verify SSH Agent Setup
+
+If you enabled SSH Agent integration during the wizard, test it:
+
+```bash
+ssh -T git@github.com
+```
+You should be prompted for your 1Password master password (or use biometrics if configured). After unlocking, the SSH key is cached by `keychain` and you won't need to enter the password again until your session expires.
+
+---
+
+## Manual Secret Configuration (Optional)
+
+If you skipped the wizard or want to manually edit your secrets later:
+
+### 1. Configure SSH Passphrase Reference
 
 1. Open 1Password app
 2. Find or create your SSH key item (e.g., "my-ssh-key")
 3. Add the passphrase to the **Password** field
 4. Click the field → **"Copy Secret Reference"**
 5. The reference should look like: `op://Private/my-ssh-key/password`
+
+Edit `~/.ssh/askpass-1password.sh` and update the reference:
+```bash
+OP_SECRET_REFERENCE="op://Private/my-ssh-key/password"
+```
 
 6. Update `~/.ssh/askpass-1password.sh` with your reference:
    ```bash

@@ -440,36 +440,6 @@ export default function (pi: ExtensionAPI) {
   });
 
   // ============================================================
-  // Command: /op-init - Initialize system setup
-  // ============================================================
-  pi.registerCommand("op-init", {
-    description: "Initialize 1Password SSH system setup (runs install.sh)",
-    handler: async (_args, ctx) => {
-      const installPath = resolve(ctx.cwd, "install.sh");
-      
-      if (!existsSync(installPath)) {
-        ctx.ui.notify(`install.sh not found in current directory: ${ctx.cwd}\n\nPlease navigate to the pi-1password repository root and try again.`, "error");
-        return;
-      }
-      
-      try {
-        ctx.ui.notify("Running 1Password SSH system initialization...", "info");
-        
-        // Run with -y to avoid interactive prompts in Pi
-        const { stdout, stderr } = await execAsync(`bash ${installPath} -y`);
-        
-        ctx.ui.notify("System initialization complete!", "success");
-        ctx.ui.notify(`\n${stdout}\n`, "info");
-        ctx.ui.notify("IMPORTANT: Please restart your terminal or run 'source ~/.zshrc' (or ~/.bashrc) for changes to take effect.", "warning");
-        
-      } catch (e) {
-        const error = e instanceof Error ? e.message : String(e);
-        ctx.ui.notify(`Installation failed: ${error}`, "error");
-      }
-    },
-  });
-
-  // ============================================================
   // Command: /op-status - Check 1Password status
   // ============================================================
   pi.registerCommand("op-status", {

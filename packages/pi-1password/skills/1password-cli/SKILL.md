@@ -16,7 +16,7 @@ If you have a 1Password Desktop app installed:
 
 ### Option B: Session Token Caching (Best for WSL/Linux)
 If the Desktop bridge doesn't work, use the session manager to avoid repeated password prompts:
-1. Run the installer `./install.sh` and enable "Session Token Caching".
+1. Run the interactive setup wizard `npx 1password-cli-setup` and enable "Session Token Caching".
 2. Or manually add to shell config:
    ```bash
    source ~/.config/op-ssh/op-session-manager.sh
