@@ -1,6 +1,6 @@
 {
   "name": "pi-1password",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "1Password SSH Setup - SSH agent integration and Pi coding agent secret management",
   "main": "extensions/1password.ts",
   "scripts": {
