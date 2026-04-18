@@ -201,9 +201,6 @@ function createUserTemplate(): void {
 
 # Example: Global API keys that don't change per project
 # OPENAI_API_KEY="op://Private/API-Keys/openai"
-# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
-
-# Example: Personal GitHub token
 # GITHUB_TOKEN="op://Personal/GitHub/token"
 
 # SSH Key (used by askpass script)
@@ -684,12 +681,12 @@ export default function (pi: ExtensionAPI) {
 # Location: ${filePath}
 #
 # These variables override user-level environment from ~/.config/op-ssh/.env.1pass
-# Format: KEY=op://vault/item/field  OR  KEY=plain-value
+# Format: KEY="op://vault/item/field"  OR  KEY="plain-value"
 
 # 1Password Secret References (op:// vault/item/field)
-GITHUB_TOKEN="op://Personal/GitHub/token"
-OPENAI_API_KEY="op://Private/API-Keys/openai"
-ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# GITHUB_TOKEN="op://Personal/GitHub/token"
+# OPENAI_API_KEY="op://Private/API-Keys/openai"
+# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
 
 # Database connections
 # DATABASE_URL="op://Work/Database/prod"

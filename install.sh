@@ -150,8 +150,8 @@ install_helpers() {
 # Project-level values will OVERRIDE these if the same variable is defined.
 #
 # Format:
-#   export VAR_NAME="op://vault/item/field"
-#   export VAR_NAME="plain value"
+#   VAR_NAME="op://vault/item/field"
+#   VAR_NAME="plain value"
 #
 # The 1Password CLI (op) must be authenticated for op:// references to resolve.
 # Ensure OP_SERVICE_ACCOUNT_TOKEN is set in your shell config for authentication.
@@ -160,16 +160,15 @@ install_helpers() {
 # SSH Keys (used by askpass script)
 # ===================================================================
 # Configure this with your actual 1Password reference
-export SSH_KEY_PASSPHRASE="op://Private/my-ssh-key/password"
+SSH_KEY_PASSPHRASE="op://Private/my-ssh-key/password"
 
 # ===================================================================
 # Global / Personal API Keys
 # Uncomment and update when you have these in 1Password
 # ===================================================================
-# export OPENAI_API_KEY="op://Private/API-Keys/openai"
-# export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
-# export HUGGINGFACE_API_TOKEN="op://Private/API-Keys/huggingface"
-# export GITHUB_TOKEN="op://Personal/GitHub/token"
+# OPENAI_API_KEY="op://Private/API-Keys/openai"
+# ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+# GITHUB_TOKEN="op://Personal/GitHub/token"
 EOF
         chmod 600 "$CONFIG_DIR/.env.1pass"
         echo "  Created: .env.1pass (template)"
