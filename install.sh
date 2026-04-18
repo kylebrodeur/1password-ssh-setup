@@ -160,7 +160,7 @@ install_helpers() {
 # SSH Keys (used by askpass script)
 # ===================================================================
 # Configure this with your actual 1Password reference
-export SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
+export SSH_KEY_PASSPHRASE="op://Private/my-ssh-key/password"
 
 # ===================================================================
 # Global / Personal API Keys
@@ -300,6 +300,39 @@ EOF
         echo -e "${GREEN}Added session manager to $shell_rc${NC}"
     else
         echo -e "${YELLOW}Skipped session manager configuration${NC}"
+    fi
+
+    if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+        cat << EOF >> "$shell_rc"
+
+# --- 1PASSWORD CLI HELPERS ---
+opon() {
+  if ! op vault list >/dev/null 2>&1; then
+    if [[ -f ~/.config/op-ssh/op-session-manager.sh ]]; then
+      source ~/.config/op-ssh/op-session-manager.sh
+    else
+      eval "\$(op signin)"
+    fi
+  fi
+}
+
+opoff() {
+  op signout
+  rm -f ~/.config/op-ssh/.op_session_token
+}
+
+getpwd() {
+  opon
+  op item get "\$1" --fields label=password
+}
+
+getmfa() {
+  opon
+  op item get "\$1" --otp
+}
+# -----------------------------
+EOF
+        echo -e "${GREEN}Added CLI helpers to $shell_rc${NC}"
     fi
 
     if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then

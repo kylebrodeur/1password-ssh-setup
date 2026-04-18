@@ -8,7 +8,7 @@
 # 3. Paste it below, replacing the placeholder
 
 # Configuration - UPDATE THIS LINE with your actual reference
-OP_SECRET_REFERENCE="op://Employee/pegasus-ssh/password"
+OP_SECRET_REFERENCE="op://Private/my-ssh-key/password"
 
 # Alternative: Load from helper functions (if available)
 if [ -f "$HOME/.config/op-ssh/op-ai-helper.sh" ]; then

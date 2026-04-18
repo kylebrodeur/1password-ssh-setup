@@ -99,6 +99,42 @@ Configuration follows cascading precedence:
 1. **User Level** (`~/.config/op-ssh/.env.1pass`) - Global secrets
 2. **Project Level** (`./.env.1pass`) - Project-specific, overrides user
 
+## LLM Context and Best Practices
+
+When building AI tools or interacting with LLMs regarding 1Password, always refer to the official LLM-optimized documentation:
+- **Full Index**: `https://developer.1password.com/llms.txt`
+- **CLI Docs**: `https://developer.1password.com/llms-cli.txt`
+- **SDK Docs**: `https://developer.1password.com/llms-sdks.txt`
+- **Secrets Automation**: `https://developer.1password.com/llms-secrets-automation.txt`
+
+To fetch specific pages as Markdown for retrieval-augmented generation (RAG), append `.md` to any documentation URL (e.g., `https://developer.1password.com/docs/cli/get-started.md`).
+
+## Agent Hooks
+
+1Password provides agent hooks that run inside supported IDEs and AI agents (Cursor, Claude Code, GitHub Copilot, Windsurf) to validate and verify 1Password setup before shell execution or tool use.
+
+The available hook is `1password-validate-mounted-env-files` which validates mounted `.env` files from 1Password Environments.
+
+### Installing Hooks
+
+You can install the agent hooks from the [1Password/agent-hooks](https://github.com/1Password/agent-hooks) repository:
+
+```bash
+git clone https://github.com/1Password/agent-hooks
+cd agent-hooks
+
+# Install for Cursor
+./install.sh --agent cursor --target-dir /path/to/your/project
+
+# Install for Windsurf
+./install.sh --agent windsurf --target-dir /path/to/your/project
+
+# Install for Claude Code
+./install.sh --agent claude-code --target-dir /path/to/your/project
+```
+
+The script will bundle the hooks and optionally create the required config file (e.g. `.cursor/hooks.json` or `.windsurf/hooks.json`).
+
 ## Files and Directories
 
 ```

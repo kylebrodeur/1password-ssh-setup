@@ -40,13 +40,13 @@ description: "SSH agent management with 1Password for passphrase handling and ke
    ```
 
 2. Store the key's passphrase in 1Password:
-   - Create a new item (e.g., "pegasus-ssh")
+   - Create a new item (e.g., "my-ssh-key")
    - Add the passphrase to the **Password** field
    - Save as a **Password** field type
 
 3. Update `~/.ssh/askpass-1password.sh`:
    ```bash
-   SSH_KEY_REFERENCE="op://Employee/pegasus-ssh/password"
+   SSH_KEY_REFERENCE="op://Private/my-ssh-key/password"
    ```
 
 ## Features

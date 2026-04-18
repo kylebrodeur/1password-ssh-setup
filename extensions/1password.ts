@@ -207,7 +207,7 @@ function createUserTemplate(): void {
 # GITHUB_TOKEN="op://Personal/GitHub/token"
 
 # SSH Key (used by askpass script)
-SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
+SSH_KEY_PASSPHRASE="op://Private/my-ssh-key/password"
 `;
     writeFileSync(USER_ENV_FILE, template, { mode: 0o600 });
   }

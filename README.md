@@ -22,12 +22,14 @@ This setup supports three authentication methods with 1Password CLI:
    - Authenticate once; remain signed in until the session expires.
 
 ## Features
-- SSH Agent Integration - Keychain + 1Password for passphrase management
-- Pi Extension - Native 1Password tools and commands in Pi
-- Cascading Environment - User-level and project-level `.env.1pass` files
-- CLI Tools - `op-reference` for shell scripts and automation
-- Platform Support - Works on WSL and native Windows
-- Flexible Auth - Supports both Service Accounts and standard `op signin`
+- **24-Hour Persistent Sessions** - Enter your master password once a day (background session keep-alive)
+- **CLI Helper Functions** - `opon`, `opoff`, `getpwd`, and `getmfa` automatically added to your shell
+- **SSH Agent Integration** - Keychain + 1Password for passphrase management
+- **Pi Extension** - Native 1Password tools and commands in Pi
+- **Cascading Environment** - User-level and project-level `.env.1pass` files
+- **CLI Tools** - `op-reference` for shell scripts and automation
+- **Platform Support** - Works on WSL and native Windows
+- **Flexible Auth** - Supports both Service Accounts and standard `op signin`
 
 ## Platform-Specific Setup
 
@@ -150,9 +152,17 @@ Native 1Password integration for Pi:
 - `op_get_secret` - Retrieve secrets by reference
 - `op_load_env` - Load `.env.1pass` files
 
-### 3. CLI Tool (op-reference)
+### 3. CLI Tool (op-reference) & Shell Helpers
 
-Command-line tool for scripts:
+**Shell Helpers (Added to `~/.zshrc` / `~/.bashrc`):**
+```bash
+opon                  # Quickly sign in and load session token
+opoff                 # Sign out and remove session token
+getpwd "Item Name"    # Get a password directly to stdout
+getmfa "Item Name"    # Get current TOTP token to stdout
+```
+
+**Command-line tool for scripts (`op-reference`):**
 
 ```bash
 op-reference check                    # Check auth status
@@ -196,7 +206,7 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions includ
 
 Edit `~/.ssh/askpass-1password.sh`:
 ```bash
-OP_SECRET_REFERENCE="op://Employee/pegasus-ssh/password"
+OP_SECRET_REFERENCE="op://Private/my-ssh-key/password"
 ```
 
 ### Adding API Keys
@@ -228,4 +238,7 @@ by Bas Nijholt.
 
 Additional references:
 - [1Password SSH Documentation](https://developer.1password.com/docs/ssh/)
+- [1Password CLI Reference](https://developer.1password.com/docs/cli/reference/)
+- [1Password Agent Hooks](https://github.com/1Password/agent-hooks/)
+- [Building on 1Password with LLMs](https://developer.1password.com/docs/building-with-llms/)
 - [Funtoo Keychain](https://www.funtoo.org/Keychain)

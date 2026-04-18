@@ -17,10 +17,28 @@ is_session_valid() {
     return 1
 }
 
+# Function to keep the 1Password session alive by polling it every 25 minutes
+keep_session_alive() {
+    while true; do
+        sleep 1500 # 25 minutes
+        if [[ -f "$TOKEN_FILE" ]]; then
+            source "$TOKEN_FILE"
+            op vault list >/dev/null 2>&1 || break
+        else
+            break
+        fi
+    done
+}
+
 # Main logic
 if is_session_valid; then
     # Session is valid, just load it into the current shell
     source "$TOKEN_FILE"
+    # Start keep-alive in the background if not already running
+    if ! pgrep -f "sleep 1500" >/dev/null; then
+        keep_session_alive &
+        disown
+    fi
 else
     # Session is invalid or missing; perform signin
     # we use a temporary file to capture the output of op signin
@@ -37,6 +55,11 @@ else
     if op signin > "$TOKEN_FILE"; then
         chmod 600 "$TOKEN_FILE"
         source "$TOKEN_FILE"
+        # Start keep-alive in the background
+        if ! pgrep -f "sleep 1500" >/dev/null; then
+            keep_session_alive &
+            disown
+        fi
     else
         echo "Failed to sign in to 1Password." >&2
         rm -f "$TOKEN_FILE"

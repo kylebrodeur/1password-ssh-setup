@@ -94,15 +94,15 @@ This will:
 ### Step 2: Configure 1Password Secret Reference
 
 1. Open 1Password app
-2. Find or create your SSH key item (e.g., "pegasus-ssh")
+2. Find or create your SSH key item (e.g., "my-ssh-key")
 3. Add the passphrase to the **Password** field
 4. Click the field → **"Copy Secret Reference"**
-5. The reference should look like: `op://Employee/pegasus-ssh/password`
+5. The reference should look like: `op://Private/my-ssh-key/password`
 
 6. Update `~/.ssh/askpass-1password.sh` with your reference:
    ```bash
    # Edit the file and replace the reference
-   SSH_KEY_REFERENCE="op://Employee/pegasus-ssh/password"
+   SSH_KEY_REFERENCE="op://Private/my-ssh-key/password"
    ```
 
 ### Step 3: Test
@@ -194,7 +194,7 @@ Edit `~/.config/op-ssh/.env.1pass`:
 
 ```bash
 # SSH passphrase (required)
-SSH_KEY_PASSPHRASE="op://Employee/pegasus-ssh/password"
+SSH_KEY_PASSPHRASE="op://Private/my-ssh-key/password"
 
 # Personal API keys
 OPENAI_API_KEY="op://Private/API-Keys/openai"
