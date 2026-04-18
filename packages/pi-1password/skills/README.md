@@ -1,3 +1,8 @@
+---
+name: 1password-ssh-skills
+description: "Documentation and index of available 1Password and SSH agent skills."
+---
+
 # Agent Skills
 
 This directory contains [Agent Skills](https://agentskills.io/) for 1Password and SSH integration.
