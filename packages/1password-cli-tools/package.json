@@ -3,7 +3,8 @@
   "version": "0.3.0",
   "description": "1Password SSH Setup - SSH agent integration and CLI tools",
   "bin": {
-    "1password-cli-setup": "bin/setup.js"
+    "1password-cli-setup": "bin/setup.js",
+    "op-setup": "bin/setup.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

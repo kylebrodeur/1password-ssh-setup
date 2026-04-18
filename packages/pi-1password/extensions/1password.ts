@@ -965,6 +965,20 @@ export default function (pi: ExtensionAPI) {
   });
 
   // ============================================================
+  // Command: /op-setup - Setup Wizard
+  // ============================================================
+  pi.registerCommand("op-setup", {
+    description: "Launch the interactive 1Password CLI setup wizard",
+    handler: async (_args, ctx) => {
+      ctx.ui.notify("The setup wizard is interactive and must be run in a terminal.", "info");
+      ctx.ui.notify("Open a new terminal and run:", "info");
+      ctx.ui.notify("  op-setup", "success");
+      ctx.ui.notify("or", "info");
+      ctx.ui.notify("  npx 1password-cli-setup", "success");
+    },
+  });
+
+  // ============================================================
   // Event Handlers
   // ============================================================
 
