@@ -1,0 +1,41 @@
+{
+  "name": "pi-1password",
+  "version": "0.3.0",
+  "description": "1Password Pi coding agent secret management",
+  "main": "extensions/1password.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "1password",
+    "pi-package",
+    "agent",
+    "secrets"
+  ],
+  "author": "Kyle Brodeur",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kylebrodeur/1password-ssh-setup.git",
+    "directory": "packages/pi-1password"
+  },
+  "pi": {
+    "extensions": [
+      "extensions"
+    ],
+    "skills": [
+      "skills"
+    ]
+  },
+  "files": [
+    "extensions/",
+    "skills/",
+    "package.json"
+  ],
+  "dependencies": {
+    "1password-cli-tools": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

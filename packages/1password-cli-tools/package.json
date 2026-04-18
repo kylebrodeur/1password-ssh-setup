@@ -1,0 +1,39 @@
+{
+  "name": "1password-cli-tools",
+  "version": "0.3.0",
+  "description": "1Password SSH Setup - SSH agent integration and CLI tools",
+  "bin": {
+    "1password-cli-setup": "bin/setup.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "1password",
+    "ssh",
+    "agent",
+    "security"
+  ],
+  "author": "Kyle Brodeur",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kylebrodeur/1password-ssh-setup.git",
+    "directory": "packages/1password-cli-tools"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "examples/",
+    "package.json"
+  ],
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "commander": "^12.0.0",
+    "picocolors": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module"
+}
