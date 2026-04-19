@@ -3,15 +3,12 @@
 import * as p from '@clack/prompts';
 import pc from 'picocolors';
 import { Command } from 'commander';
-import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const SRC_DIR = path.resolve(__dirname, '../src');
+import { SSH_DIR, ENV_FILE } from '../lib/constants.js';
+import { checkPrereqs, setupDirs, installFiles } from '../lib/system.js';
+import { updateNpmrc, updateShellRc } from '../lib/config.js';
 
 const program = new Command();
 program
@@ -19,56 +16,6 @@ program
   .description('Interactive setup for 1Password CLI Tools and SSH Agent Integration')
   .version('0.3.0')
   .parse(process.argv);
-
-const HOME_DIR = os.homedir();
-const SSH_DIR = path.join(HOME_DIR, '.ssh');
-const BIN_DIR = path.join(HOME_DIR, '.local', 'bin');
-const CONFIG_DIR = path.join(HOME_DIR, '.config', 'op-ssh');
-const ENV_FILE = path.join(CONFIG_DIR, '.env.1pass');
-
-function checkPrereqs() {
-  try {
-    execSync('op --version', { stdio: 'ignore' });
-  } catch (e) {
-    p.log.warn(pc.yellow('1Password CLI (op) is not installed or not in PATH.'));
-    p.log.message('Please install it from: https://1password.com/downloads/command-line/');
-  }
-
-  try {
-    execSync('keychain --version', { stdio: 'ignore' });
-  } catch (e) {
-    p.log.warn(pc.yellow('keychain is not installed. SSH Agent integration may not work.'));
-    p.log.message('Linux: sudo apt-get install keychain\nmacOS: brew install keychain');
-  }
-}
-
-function setupDirs() {
-  const dirs = [SSH_DIR, BIN_DIR, CONFIG_DIR];
-  for (const dir of dirs) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  }
-  fs.chmodSync(CONFIG_DIR, 0o700);
-}
-
-function installFiles() {
-  const files = [
-    { src: 'askpass-1password.sh', dest: path.join(SSH_DIR, 'askpass-1password.sh'), mode: 0o755 },
-    { src: 'setup_ssh_agent.sh', dest: path.join(SSH_DIR, 'setup_ssh_agent.sh'), mode: 0o755 },
-    { src: 'op-reference', dest: path.join(BIN_DIR, 'op-reference'), mode: 0o755 },
-    { src: 'op-session-manager.sh', dest: path.join(CONFIG_DIR, 'op-session-manager.sh'), mode: 0o755 },
-    { src: 'op-ai-helper.sh', dest: path.join(CONFIG_DIR, 'op-ai-helper.sh'), mode: 0o755 },
-  ];
-
-  for (const file of files) {
-    const srcPath = path.join(SRC_DIR, file.src);
-    if (fs.existsSync(srcPath)) {
-      fs.copyFileSync(srcPath, file.dest);
-      fs.chmodSync(file.dest, file.mode);
-    }
-  }
-}
 
 async function main() {
   p.intro(pc.bgBlue(pc.white(' 1Password CLI & SSH Setup Wizard ')));
@@ -179,32 +126,8 @@ SSH_KEY_PASSPHRASE="${sshRef}"
     }
 
     if (keys.includes('NODE_AUTH_TOKEN')) {
-      const npmrcPath = path.join(HOME_DIR, '.npmrc');
       const npmrcLine = '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}';
-      
-      let writeNpmrc = true;
-      if (fs.existsSync(npmrcPath)) {
-        const currentNpmrc = fs.readFileSync(npmrcPath, 'utf8');
-        if (currentNpmrc.includes('//registry.npmjs.org/:_authToken=')) {
-          if (!currentNpmrc.includes(npmrcLine)) {
-            const overwrite = await p.confirm({
-              message: 'Your ~/.npmrc already has a hardcoded _authToken. Overwrite it to use ${NODE_AUTH_TOKEN} from 1Password?',
-              initialValue: true,
-            });
-            if (!p.isCancel(overwrite) && overwrite) {
-              const updatedNpmrc = currentNpmrc.replace(/\/\/registry\.npmjs\.org\/:_authToken=.*/g, npmrcLine);
-              fs.writeFileSync(npmrcPath, updatedNpmrc);
-              p.log.success('Updated ~/.npmrc to use 1Password token');
-            }
-          }
-          writeNpmrc = false; // We either replaced it or user declined
-        }
-      }
-      
-      if (writeNpmrc) {
-        fs.appendFileSync(npmrcPath, `\n${npmrcLine}\n`);
-        p.log.success('Configured ~/.npmrc to use 1Password token');
-      }
+      await updateNpmrc(npmrcLine);
     }
   }
 
@@ -222,74 +145,7 @@ SSH_KEY_PASSPHRASE="${sshRef}"
   }
 
   if (enableHelpers) {
-    const shellRcPath = fs.existsSync(path.join(HOME_DIR, '.zshrc'))
-      ? path.join(HOME_DIR, '.zshrc')
-      : path.join(HOME_DIR, '.bashrc');
-
-    let rcContent = `\n# --- BEGIN 1PASSWORD SETUP ---\n`;
-    rcContent += `# --- 1Password Session Manager ---\n`;
-    rcContent += `if [[ -f "${CONFIG_DIR}/op-session-manager.sh" ]]; then\n`;
-    rcContent += `  source "${CONFIG_DIR}/op-session-manager.sh"\n`;
-    rcContent += `fi\n`;
-    
-    rcContent += `\n# --- 1PASSWORD CLI HELPERS ---\n`;
-    rcContent += `opon() {
-  if ! op vault list >/dev/null 2>&1; then
-    if [[ -f ~/.config/op-ssh/op-session-manager.sh ]]; then
-      source ~/.config/op-ssh/op-session-manager.sh
-    else
-      eval "$(op signin)"
-    fi
-  fi
-}
-
-opoff() {
-  op signout
-  rm -f ~/.config/op-ssh/.op_session_token
-}
-
-getpwd() {
-  opon
-  op item get "$1" --fields label=password
-}
-
-getmfa() {
-  opon
-  op item get "$1" --otp
-}
-
-oprun() {
-  opon
-  local op_args=("--env-file" ~/.config/op-ssh/.env.1pass)
-  if [[ -f "./.env.1pass" ]]; then
-    op_args+=("--env-file" "./.env.1pass")
-  fi
-  op run "\${op_args[@]}" -- "$@"
-}\n`;
-
-    if (enableSSH) {
-      rcContent += `\n# --- 1Password SSH Setup ---\n`;
-      rcContent += `export PATH="${BIN_DIR}:$PATH"\n`;
-      rcContent += `_ssh_setup_script="${HOME_DIR}/.ssh/setup_ssh_agent.sh"\n`;
-      rcContent += `if [[ -f "$_ssh_setup_script" ]]; then\n`;
-      rcContent += `  source "$_ssh_setup_script"\n`;
-      rcContent += `fi\n`;
-    }
-    
-    rcContent += `# --- END 1PASSWORD SETUP ---\n`;
-
-    let currentRc = fs.existsSync(shellRcPath) ? fs.readFileSync(shellRcPath, 'utf8') : '';
-    
-    const blockRegex = /\n?# --- BEGIN 1PASSWORD SETUP ---[\s\S]*?# --- END 1PASSWORD SETUP ---\n?/g;
-    
-    if (blockRegex.test(currentRc)) {
-      currentRc = currentRc.replace(blockRegex, `\n${rcContent}`);
-      fs.writeFileSync(shellRcPath, currentRc);
-      p.log.success(`Updated existing 1Password shell configuration in ${shellRcPath}`);
-    } else {
-      fs.appendFileSync(shellRcPath, `\n${rcContent}`);
-      p.log.success(`Added 1Password shell configuration to ${shellRcPath}`);
-    }
+    updateShellRc(enableSSH);
   }
 
   p.outro(pc.bgGreen(pc.white(' Setup Complete! Please reload your terminal or run: source ~/.zshrc ')));
