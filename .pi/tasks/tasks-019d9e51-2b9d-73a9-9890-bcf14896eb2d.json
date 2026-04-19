@@ -1,5 +1,5 @@
 {
-  "nextId": 27,
+  "nextId": 28,
   "tasks": [
     {
       "id": "23",
@@ -44,6 +44,17 @@
       "blockedBy": [],
       "createdAt": 1776575142250,
       "updatedAt": 1776575300974
+    },
+    {
+      "id": "27",
+      "subject": "Make setup wizard idempotent for shell config",
+      "description": "Check the `setup.js` script to see how it handles injecting shell configuration and ensure it doesn't create duplicate blocks. Modify the logic if necessary to safely remove old blocks and insert the new ones, preventing `.zshrc` duplication on multiple runs.",
+      "status": "in_progress",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776575416030,
+      "updatedAt": 1776575416031
     }
   ]
 }

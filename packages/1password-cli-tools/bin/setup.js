@@ -226,7 +226,8 @@ SSH_KEY_PASSPHRASE="${sshRef}"
       ? path.join(HOME_DIR, '.zshrc')
       : path.join(HOME_DIR, '.bashrc');
 
-    let rcContent = `\n# --- 1Password Session Manager ---\n`;
+    let rcContent = `\n# --- BEGIN 1PASSWORD SETUP ---\n`;
+    rcContent += `# --- 1Password Session Manager ---\n`;
     rcContent += `if [[ -f "${CONFIG_DIR}/op-session-manager.sh" ]]; then\n`;
     rcContent += `  source "${CONFIG_DIR}/op-session-manager.sh"\n`;
     rcContent += `fi\n`;
@@ -274,9 +275,21 @@ oprun() {
       rcContent += `  source "$_ssh_setup_script"\n`;
       rcContent += `fi\n`;
     }
+    
+    rcContent += `# --- END 1PASSWORD SETUP ---\n`;
 
-    fs.appendFileSync(shellRcPath, rcContent);
-    p.log.success(`Added shell configuration to ${shellRcPath}`);
+    let currentRc = fs.existsSync(shellRcPath) ? fs.readFileSync(shellRcPath, 'utf8') : '';
+    
+    const blockRegex = /\n?# --- BEGIN 1PASSWORD SETUP ---[\s\S]*?# --- END 1PASSWORD SETUP ---\n?/g;
+    
+    if (blockRegex.test(currentRc)) {
+      currentRc = currentRc.replace(blockRegex, `\n${rcContent}`);
+      fs.writeFileSync(shellRcPath, currentRc);
+      p.log.success(`Updated existing 1Password shell configuration in ${shellRcPath}`);
+    } else {
+      fs.appendFileSync(shellRcPath, `\n${rcContent}`);
+      p.log.success(`Added 1Password shell configuration to ${shellRcPath}`);
+    }
   }
 
   p.outro(pc.bgGreen(pc.white(' Setup Complete! Please reload your terminal or run: source ~/.zshrc ')));
