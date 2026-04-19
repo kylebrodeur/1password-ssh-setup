@@ -230,7 +230,11 @@ getmfa() {
 
 oprun() {
   opon
-  op run --env-file ~/.config/op-ssh/.env.1pass -- "$@"
+  local op_args=("--env-file" ~/.config/op-ssh/.env.1pass)
+  if [[ -f "./.env.1pass" ]]; then
+    op_args+=("--env-file" "./.env.1pass")
+  fi
+  op run "\${op_args[@]}" -- "$@"
 }\n`;
 
     if (enableSSH) {
