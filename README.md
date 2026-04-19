@@ -184,10 +184,10 @@ Supports cascading configuration:
 Example:
 ```bash
 # User config has:
-export OPENAI_API_KEY="op://Personal/API-Keys/openai"
+OPENAI_API_KEY="op://Personal/API-Keys/openai"
 
 # Project config overrides with:
-export OPENAI_API_KEY="op://Work/OpenAI/prod-key"
+OPENAI_API_KEY="op://Work/OpenAI/prod-key"
 
 # Result: Project value is used
 ```

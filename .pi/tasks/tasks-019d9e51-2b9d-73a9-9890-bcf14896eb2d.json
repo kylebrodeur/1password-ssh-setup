@@ -1,0 +1,82 @@
+{
+  "nextId": 23,
+  "tasks": [
+    {
+      "id": "16",
+      "subject": "Remove 'export' from docs/SETUP.md examples",
+      "description": "Remove the 'export' keyword from all environment variable examples in `docs/SETUP.md`. The previous attempt failed because of duplicate blocks or incorrect line matching. I need to carefully read the file, identify the exact lines, and replace them precisely.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147174,
+      "updatedAt": 1776564483506
+    },
+    {
+      "id": "17",
+      "subject": "Remove 'export' from README.md examples",
+      "description": "Remove the 'export' keyword from all environment variable examples in `README.md`. I need to read the file, locate the exact lines (like `export OPENAI_API_KEY=\"op://...\"`), and replace them.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147176,
+      "updatedAt": 1776564483507
+    },
+    {
+      "id": "18",
+      "subject": "Remove 'export' from 1password-cli SKILL.md",
+      "description": "Remove the 'export' keyword from all environment variable examples in `packages/pi-1password/skills/1password-cli/SKILL.md`. I need to read the file and replace the exact lines.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147177,
+      "updatedAt": 1776564483518
+    },
+    {
+      "id": "19",
+      "subject": "Remove 'export' from 1password-env SKILL.md",
+      "description": "Remove the 'export' keyword from all environment variable examples in `packages/pi-1password/skills/1password-env/SKILL.md`. I need to read the file and replace the exact lines.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147178,
+      "updatedAt": 1776564483519
+    },
+    {
+      "id": "20",
+      "subject": "Remove 'export' from SKILLS.md",
+      "description": "Remove the 'export' keyword from all environment variable examples in `packages/pi-1password/SKILLS.md`. I need to read the file and replace the exact lines.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147179,
+      "updatedAt": 1776564483520
+    },
+    {
+      "id": "21",
+      "subject": "Commit and push documentation updates",
+      "description": "After all documentation files are updated, run `git diff` to verify the changes, then commit and push them to the repository.",
+      "status": "in_progress",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147180,
+      "updatedAt": 1776564609508
+    },
+    {
+      "id": "22",
+      "subject": "Final verification of oprun syntax in setup.js",
+      "description": "Run a final check on the `oprun` function inside `packages/1password-cli-tools/bin/setup.js` to ensure the syntax is correct and node can execute it without errors. Run `node --check` and `eslint` if available.",
+      "status": "completed",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776564147180,
+      "updatedAt": 1776564609506
+    }
+  ]
+}

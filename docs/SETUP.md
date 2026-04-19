@@ -275,8 +275,8 @@ For Linux/Windows development, use **`op run`** with environment files:
 
 1. Create `app.env` with secret references:
    ```bash
-   export OPENAI_API_KEY="op://Private/API-Keys/openai"
-   export DATABASE_URL="op://Work/Database/prod"
+   OPENAI_API_KEY="op://Private/API-Keys/openai"
+   DATABASE_URL="op://Work/Database/prod"
    ```
 
 2. Run your app with secrets provisioned:
@@ -401,15 +401,15 @@ Open the config directory and show user env file.
 
 **Project-Level (`.env.1pass`)**
 ```
-# Format: export VAR="op://vault/item/field"
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export DATABASE_URL="op://Work/Database/prod"
+# Format: VAR="op://vault/item/field"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+DATABASE_URL="op://Work/Database/prod"
 ```
 
 **User-Level (same format)**
 ```
 # ~/.config/op-ssh/.env.1pass
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
 ```
 
 **Note:** Use `export` in `.env.1pass` files for consistency with `.env` parsing. The extension handles both formats.

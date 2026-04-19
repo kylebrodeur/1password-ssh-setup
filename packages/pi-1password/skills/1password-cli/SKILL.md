@@ -58,8 +58,8 @@ Use `.env.1pass` files with secret references:
 # Project-level: ./.env.1pass (in project root)
 
 # Format:
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export DATABASE_URL="op://Work/Database/prod"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+DATABASE_URL="op://Work/Database/prod"
 ```
 
 ### Secret Reference Syntax
@@ -175,7 +175,7 @@ For applications, use `op run` to inject secrets:
 op run --env-file app.env -- node app.js
 
 # With command-line arguments
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
 op run -- node app.js
 ```
 

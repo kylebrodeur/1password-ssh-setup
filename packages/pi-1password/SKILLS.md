@@ -87,14 +87,14 @@ ANTHROPIC_API_KEY=op://Private/API-Keys/anthropic
 ### `~/.config/op-ssh/.env.1pass` (User-level)
 
 ```
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+ANTHROPIC_API_KEY="op://Private/API-Keys/anthropic"
 ```
 
 ### `./.env.1pass` (Project-level, overrides user)
 
 ```
-export PROJECT_API_KEY="op://Work/ProjectX/token"
+PROJECT_API_KEY="op://Work/ProjectX/token"
 ```
 
 ## Original Article

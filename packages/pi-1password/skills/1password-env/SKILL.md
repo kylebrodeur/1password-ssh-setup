@@ -57,9 +57,9 @@ OPENAI_API_KEY=op://Private/API-Keys/openai
 
 ### `.env.1pass` (1Password references)
 ```
-# Format: export VAR="op://vault/item/field"
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
-export DATABASE_URL="op://Work/Database/prod"
+# Format: VAR="op://vault/item/field"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
+DATABASE_URL="op://Work/Database/prod"
 ```
 
 ### Supported Formats for AI Agents
@@ -187,7 +187,7 @@ Open the config directory and show user env file.
 **Both formats work in `.env.1pass` files:**
 ```
 # With export
-export OPENAI_API_KEY="op://Private/API-Keys/openai"
+OPENAI_API_KEY="op://Private/API-Keys/openai"
 
 # Without export
 OPENAI_API_KEY="op://Private/API-Keys/openai"
@@ -196,7 +196,7 @@ OPENAI_API_KEY="op://Private/API-Keys/openai"
 **Both formats work in project env files:**
 ```
 # With export
-export DATABASE_URL="op://Work/Database/prod"
+DATABASE_URL="op://Work/Database/prod"
 
 # Without export
 DATABASE_URL="op://Work/Database/prod"
