@@ -35,6 +35,13 @@ Alternatively, you can manually add it to `~/.config/op-ssh/.env.1pass`:
 NODE_AUTH_TOKEN="op://Private/NPM Automation Token/credential"
 ```
 
+### 4. Configure NPM to Use the Token
+For NPM to actually read the environment variable that `oprun` injects, you must update your `~/.npmrc` file to point to it:
+
+```bash
+echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" > ~/.npmrc
+```
+
 Whenever you start your terminal or run `/op-env-user` inside Pi, your system will securely pull the token into memory. 
 
 If you prefer not to inject it directly into your global shell environment, the setup wizard also provided an `oprun` alias. You can use this to inject the token securely on-the-fly for a specific command:
