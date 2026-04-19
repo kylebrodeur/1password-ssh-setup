@@ -35,7 +35,13 @@ Alternatively, you can manually add it to `~/.config/op-ssh/.env.1pass`:
 NODE_AUTH_TOKEN="op://Private/NPM Automation Token/credential"
 ```
 
-Whenever you start your terminal or run `/op-env-user` inside Pi, your system will securely pull the token into memory. When you run `npm publish`, NPM will automatically use this token and publish your package without any prompts!
+Whenever you start your terminal or run `/op-env-user` inside Pi, your system will securely pull the token into memory. 
+
+If you prefer not to inject it directly into your global shell environment, the setup wizard also provided an `oprun` alias. You can use this to inject the token securely on-the-fly for a specific command:
+```bash
+oprun npm publish
+```
+NPM will automatically use this token and publish your package without any prompts!
 
 ## Other Common API Keys
 

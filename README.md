@@ -155,6 +155,7 @@ opon                  # Quickly sign in and load session token
 opoff                 # Sign out and remove session token
 getpwd "Item Name"    # Get a password directly to stdout
 getmfa "Item Name"    # Get current TOTP token to stdout
+oprun <command>       # Run a command with secrets from ~/.config/op-ssh/.env.1pass
 ```
 
 **Command-line tool for scripts (`op-reference`):**

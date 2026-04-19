@@ -226,6 +226,11 @@ getpwd() {
 getmfa() {
   opon
   op item get "$1" --otp
+}
+
+oprun() {
+  opon
+  op run --env-file ~/.config/op-ssh/.env.1pass -- "$@"
 }\n`;
 
     if (enableSSH) {

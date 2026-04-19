@@ -60,11 +60,11 @@ Instead of polluting your global shell environment with a highly sensitive token
 - [ ] Publish the CLI Tools Package:
   ```bash
   cd ../1password-cli-tools
-  op run --env-file ~/.config/op-ssh/.env.1pass -- npm publish --access public
+  oprun npm publish --access public
   ```
 
 - [ ] Publish the Pi Extension Package:
   ```bash
   cd ../pi-1password
-  op run --env-file ~/.config/op-ssh/.env.1pass -- npm publish --access public
+  oprun npm publish --access public
   ```
