@@ -57,12 +57,6 @@ Before publishing, let's verify both packages build and install correctly on you
 ### Phase 4: Publish to NPM!
 Instead of polluting your global shell environment with a highly sensitive token, we will use 1Password's official `op run` command. This securely reads the `.env.1pass` file, resolves the `op://` reference, and injects the token *only* into the `npm publish` process!
 
-**CRITICAL STEP:** Before you publish, you must tell NPM to look for the environment variable instead of your hardcoded login token. 
-- [ ] Run this command to update your `~/.npmrc` file:
-  ```bash
-  echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" > ~/.npmrc
-  ```
-
 - [ ] Publish the CLI Tools Package:
   ```bash
   cd ../1password-cli-tools
