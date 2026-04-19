@@ -26,10 +26,10 @@ Run through the setup locally to ensure everything works and inject the NPM toke
   ```bash
   source ~/.zshrc
   ```
-- [ ] Verify the token is loaded and ready!
+- [ ] Verify the file was created correctly:
   ```bash
-  echo $NODE_AUTH_TOKEN
-  # It should output your npm_... token
+  cat ~/.config/op-ssh/.env.1pass
+  # It should show NODE_AUTH_TOKEN="op://..."
   ```
 
 ### Phase 3: Test the Packages Locally
@@ -55,16 +55,16 @@ Before publishing, let's verify both packages build and install correctly on you
   ```
 
 ### Phase 4: Publish to NPM!
-Since `NODE_AUTH_TOKEN` is loaded in your environment, `npm publish` will seamlessly use it and completely bypass any WebAuthn/passkey prompts!
+Instead of polluting your global shell environment with a highly sensitive token, we will use 1Password's official `op run` command. This securely reads the `.env.1pass` file, resolves the `op://` reference, and injects the token *only* into the `npm publish` process!
 
 - [ ] Publish the CLI Tools Package:
   ```bash
   cd ../1password-cli-tools
-  npm publish --access public
+  op run --env-file ~/.config/op-ssh/.env.1pass -- npm publish --access public
   ```
 
 - [ ] Publish the Pi Extension Package:
   ```bash
   cd ../pi-1password
-  npm publish --access public
+  op run --env-file ~/.config/op-ssh/.env.1pass -- npm publish --access public
   ```
