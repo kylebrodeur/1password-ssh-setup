@@ -193,6 +193,11 @@ Add to `~/.zshrc` (or `~/.bashrc`). **Note: Order is important!** The session ma
 export OP_SERVICE_ACCOUNT_TOKEN="your-service-account-token-here"
 # -------------------------------------
 
+# --- 1Password CLI ---
+# MUST be placed before Session Manager and SSH setup
+export PATH="$HOME/.local/bin:$PATH"
+# ---------------------
+
 # --- 1Password Session Manager (Optional, see below) ---
 # MUST be placed before SSH setup
 if [[ -f "$HOME/.config/op-ssh/op-session-manager.sh" ]]; then
@@ -206,10 +211,6 @@ if [[ -f "$_ssh_setup_script" ]]; then
   source "$_ssh_setup_script"
 fi
 # -------------------------------------
-
-# --- 1Password CLI ---
-export PATH="$HOME/.local/bin:$PATH"
-# ---------------------
 ```
 
 ### Pi Extension
@@ -287,6 +288,16 @@ For Linux/Windows development, use **`op run`** with environment files:
 3. Secrets are resolved at runtime and never appear in plaintext
 
 ## Troubleshooting
+
+### Debug Mode (Verbose Logging)
+
+If you're having issues with `op signin`, the Session Manager, or the SSH Agent, you can enable verbose debug logging.
+
+```bash
+# Add this to your ~/.zshrc or ~/.bashrc above the 1Password setup block
+export OP_DEBUG=1
+```
+This will print detailed debug statements to `stderr` whenever the shell initializes, keychain runs, or `op signin` fails.
 
 ### "Not signed in to 1Password"
 

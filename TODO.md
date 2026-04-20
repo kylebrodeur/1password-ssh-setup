@@ -31,6 +31,8 @@ Run through the setup locally to ensure everything works and inject the NPM toke
   cat ~/.config/op-ssh/.env.1pass
   # It should show NODE_AUTH_TOKEN="op://..."
   ```
+- [ ] Verify the shell script loading order in your `.zshrc`/`.bashrc`. It should have the 1Password CLI `PATH` export first, then the `op-session-manager.sh` script, and finally the `setup_ssh_agent.sh` script.
+- [ ] Open a completely new terminal window and verify that the 1Password Session Manager prompts you to authenticate (if expired) *before* keychain tries to unlock your SSH key.
 
 ### Phase 3: Test the Packages Locally
 Before publishing, let's verify both packages build and install correctly on your machine.
@@ -39,6 +41,7 @@ Before publishing, let's verify both packages build and install correctly on you
   ```bash
   cd packages/1password-cli-tools
   npm pack
+  npm uninstall -g 1password-cli-tools
   npm install -g "$PWD/1password-cli-tools-0.3.0.tgz"
   ```
 - [ ] Test the global alias to make sure the wizard launches:
@@ -49,9 +52,15 @@ Before publishing, let's verify both packages build and install correctly on you
 
 - [ ] Test the Pi Extension Package:
   ```bash
-  cd ../pi-1password
+  # From the repo root:
+  cd packages/pi-1password
   npm pack
-  pi install "$PWD"
+  # Create a temporary test directory
+  mkdir -p /tmp/pi-test
+  # Extract the packed tarball (check version matches)
+  tar -xzf pi-1password-*.tgz -C /tmp/pi-test
+  # Install the extracted package into pi
+  pi install /tmp/pi-test/package
   ```
 
 ### Phase 4: Publish to NPM!
