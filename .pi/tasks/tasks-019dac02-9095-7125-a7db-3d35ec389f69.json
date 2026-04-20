@@ -1,0 +1,53 @@
+{
+  "nextId": 5,
+  "tasks": [
+    {
+      "id": "1",
+      "subject": "Analyze 1password package collisions",
+      "description": "Identify all 1password package installations and extensions in the Pi configuration",
+      "status": "pending",
+      "activeForm": "Completing collision analysis",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776707706316,
+      "updatedAt": 1776707713857
+    },
+    {
+      "id": "2",
+      "subject": "Clean up Pi settings.json",
+      "description": "Remove duplicate 1password package references from ~/.pi/agent/settings.json, keeping only one source installation",
+      "status": "pending",
+      "activeForm": "Verifying cleanup",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776707721071,
+      "updatedAt": 1776707737955
+    },
+    {
+      "id": "3",
+      "subject": "Verify single installation",
+      "description": "Confirm only one pi-1password package installation exists for the user",
+      "status": "pending",
+      "activeForm": "Completed verification",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776707743792,
+      "updatedAt": 1776707779216
+    },
+    {
+      "id": "4",
+      "subject": "Generate final summary",
+      "description": "Create a summary of the cleanup and verify no more collisions exist",
+      "status": "pending",
+      "activeForm": "Completed final verification",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776707854358,
+      "updatedAt": 1776709595829
+    }
+  ]
+}
