@@ -8,7 +8,8 @@ import path from 'path';
 import os from 'os';
 import { SSH_DIR, ENV_FILE } from '../lib/constants.js';
 import { checkPrereqs, setupDirs, installFiles } from '../lib/system.js';
-import { updateNpmrc, updateShellRc } from '../lib/config.js';
+import { updateShellRc } from '../lib/config.js';
+import { KNOWN_PROVIDERS } from '../lib/providers/index.js';
 
 const program = new Command();
 program
@@ -94,12 +95,7 @@ SSH_KEY_PASSPHRASE="${sshRef}"
   if (configureEnv) {
     const keys = await p.multiselect({
       message: 'Which API keys do you want to configure?',
-      options: [
-        { value: 'OPENAI_API_KEY', label: 'OpenAI API Key' },
-        { value: 'ANTHROPIC_API_KEY', label: 'Anthropic API Key' },
-        { value: 'GITHUB_TOKEN', label: 'GitHub Token' },
-        { value: 'NODE_AUTH_TOKEN', label: 'NPM Automation Token' },
-      ],
+      options: KNOWN_PROVIDERS.map(prov => ({ value: prov.id, label: prov.label })),
       required: false,
     });
 
@@ -109,9 +105,35 @@ SSH_KEY_PASSPHRASE="${sshRef}"
     }
 
     for (const key of keys) {
+      if (key === 'CUSTOM') {
+        let addingCustom = true;
+        while (addingCustom) {
+          const customKey = await p.text({
+            message: 'Enter Custom Variable Name (e.g., MY_API_KEY) or leave blank to finish:',
+            placeholder: '',
+          });
+          if (p.isCancel(customKey) || !customKey.trim()) {
+            addingCustom = false;
+            break;
+          }
+          const customRef = await p.text({
+            message: `Paste the secret reference for ${customKey.trim()}:`,
+            placeholder: `op://Private/Custom/credential`,
+          });
+          if (p.isCancel(customRef)) {
+            p.cancel('Operation cancelled.');
+            process.exit(0);
+          }
+          const cleanRef = customRef.trim().replace(/^["']|["']$/g, '');
+          envContent += `${customKey.trim()}="${cleanRef}"\n`;
+        }
+        continue;
+      }
+
+      const provider = KNOWN_PROVIDERS.find(prov => prov.id === key);
       const ref = await p.text({
-        message: `Paste the secret reference for ${key}:`,
-        placeholder: `op://Private/API-Keys/${key.toLowerCase().replace('_api_key', '')}`,
+        message: `Paste the secret reference for ${provider.label}:`,
+        placeholder: provider.placeholder,
       });
 
       if (p.isCancel(ref)) {
@@ -123,11 +145,10 @@ SSH_KEY_PASSPHRASE="${sshRef}"
       const cleanRef = ref.trim().replace(/^["']|["']$/g, '');
 
       envContent += `${key}="${cleanRef}"\n`;
-    }
 
-    if (keys.includes('NODE_AUTH_TOKEN')) {
-      const npmrcLine = '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}';
-      await updateNpmrc(npmrcLine);
+      if (provider.onSetup) {
+        await provider.onSetup();
+      }
     }
   }
 
