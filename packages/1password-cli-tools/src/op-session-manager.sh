@@ -6,13 +6,27 @@ TOKEN_FILE="${HOME}/.config/op-ssh/.op_session_token"
 
 # Function to verify if the current session is valid
 is_session_valid() {
+    if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] Checking if session is valid...\033[0m" >&2; fi
+    
+    # First, check if op works natively (App integration or Service Account)
+    if op vault list &>/dev/null; then
+        if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] Session is valid natively (App integration or Service Account).\033[0m" >&2; fi
+        return 0
+    fi
+
     if [[ -f "$TOKEN_FILE" ]]; then
+        if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] Found token file: $TOKEN_FILE\033[0m" >&2; fi
         # Load the cached token
         source "$TOKEN_FILE"
-        # Try to list vaults; if it fails, session is invalid
+        # Try to list vaults again
         if op vault list &>/dev/null; then
+            if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] Session is valid via cached token.\033[0m" >&2; fi
             return 0
+        else
+            if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;31m[DEBUG] Cached token invalid.\033[0m" >&2; fi
         fi
+    else
+        if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] No token file found.\033[0m" >&2; fi
     fi
     return 1
 }
@@ -54,20 +68,44 @@ else
     echo -e "Please enter your master password to authenticate." >&2
     echo -e "\033[2m(Or press Ctrl+C to skip. You can sign in later by running 'opon')\033[0m\n" >&2
     
-    # Run op signin, capturing output to the token file while keeping stdin/stderr connected
-    # so the user can interactively type their master password
-    if op signin > "$TOKEN_FILE" 2>/dev/tty; then
-        echo -e "\033[1;32m✓ Successfully signed in to 1Password.\033[0m" >&2
+    # Run op signin, capturing output to the token file
+    # we don't force 2>/dev/tty because it breaks in some headless/piped environments
+    if [[ -n "$OP_DEBUG" ]]; then
+        echo -e "\033[1;33m[DEBUG] Running: op signin > \"$TOKEN_FILE\"\033[0m" >&2
+        op signin > "$TOKEN_FILE"
+        SIGNIN_EXIT=$?
+        echo -e "\033[1;33m[DEBUG] Exit code: $SIGNIN_EXIT\033[0m" >&2
+    else
+        op signin > "$TOKEN_FILE"
+        SIGNIN_EXIT=$?
+    fi
+
+    if [[ $SIGNIN_EXIT -eq 0 ]]; then
         chmod 600 "$TOKEN_FILE"
         source "$TOKEN_FILE"
-        # Start keep-alive in the background
-        if ! pgrep -f "sleep 1500" >/dev/null; then
-            keep_session_alive &
-            disown
+        
+        if op vault list &>/dev/null; then
+            echo -e "\033[1;32m✓ Successfully signed in to 1Password.\033[0m" >&2
+            # Start keep-alive in the background
+            if ! pgrep -f "sleep 1500" >/dev/null; then
+                keep_session_alive &
+                disown
+            fi
+        else
+            echo -e "\n\033[1;31m✗ Sign in succeeded, but session is still invalid.\033[0m" >&2
+            if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] 'op vault list' failed after sign in.\033[0m" >&2; fi
+            rm -f "$TOKEN_FILE"
         fi
     else
         echo -e "\n\033[1;31m✗ Failed to sign in or skipped.\033[0m" >&2
         echo -e "You can sign in manually later by running: \033[1;36mopon\033[0m\n" >&2
+        if [[ -n "$OP_DEBUG" ]]; then 
+            echo -e "\033[1;33m[DEBUG] Exit code was $SIGNIN_EXIT.\033[0m" >&2
+            if [[ -s "$TOKEN_FILE" ]]; then
+                echo -e "\033[1;33m[DEBUG] Output captured:\033[0m" >&2
+                cat "$TOKEN_FILE" >&2
+            fi
+        fi
         rm -f "$TOKEN_FILE"
     fi
 fi

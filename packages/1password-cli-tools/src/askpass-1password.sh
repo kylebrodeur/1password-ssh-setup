@@ -12,11 +12,13 @@ OP_SECRET_REFERENCE="op://Private/my-ssh-key/password"
 
 # Alternative: Load from helper functions (if available)
 if [ -f "$HOME/.config/op-ssh/op-ai-helper.sh" ]; then
+    if [[ -n "$OP_DEBUG" ]]; then echo "[DEBUG] askpass loading op-ai-helper.sh" >&2; fi
     # shellcheck source=/dev/null
     . "$HOME/.config/op-ssh/op-ai-helper.sh" 2>/dev/null
     # Try to get passphrase by name first, fall back to direct reference
     op_get_by_name "SSH_KEY_PASSPHRASE" 2>/dev/null || op read "$OP_SECRET_REFERENCE"
 else
+    if [[ -n "$OP_DEBUG" ]]; then echo "[DEBUG] askpass falling back to direct op read" >&2; fi
     # Direct fallback
     op read "$OP_SECRET_REFERENCE"
 fi
