@@ -167,16 +167,16 @@ Error: 1Password CLI (op) not found
 Solution: Install from https://1password.com/downloads/command-line/
 ```
 
-## Advanced: op run for Secret Injection
+## Advanced: oprun for Secret Injection
 
-For applications, use `op run` to inject secrets:
+For applications, use `oprun` (the shell helper) to inject secrets:
 ```bash
 # With environment file
-op run --env-file app.env -- node app.js
+oprun --env-file app.env -- node app.js
 
 # With command-line arguments
 OPENAI_API_KEY="op://Private/API-Keys/openai"
-op run -- node app.js
+oprun -- node app.js
 ```
 
 ## Original Article
