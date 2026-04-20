@@ -78,6 +78,14 @@ When configured, SSH prompts for passphrases are handled by:
 If not using the automated installer, add to your shell config:
 
 ```bash
+# 1Password CLI (Required first)
+export PATH="$HOME/.local/bin:$PATH"
+
+# 1Password Session Manager (Required before SSH)
+if [[ -f "$HOME/.config/op-ssh/op-session-manager.sh" ]]; then
+  source "$HOME/.config/op-ssh/op-session-manager.sh"
+fi
+
 # SSH Keychain with 1Password
 _ssh_setup_script="${HOME}/.ssh/setup_ssh_agent.sh"
 if [[ -f "$_ssh_setup_script" ]]; then
