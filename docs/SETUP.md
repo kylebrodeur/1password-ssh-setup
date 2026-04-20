@@ -268,11 +268,7 @@ OPENAI_API_KEY="op://Work/OpenAI/prod-key"
 
 ### Recommended Workflow
 
-For Linux/Windows development, use **`op run`** with environment files:
-
-### Recommended Workflow
-
-For Linux/Windows development, use **`op run`** with environment files:
+For Linux/Windows development, use **`oprun`** with environment files:
 
 1. Create `app.env` with secret references:
    ```bash
@@ -282,7 +278,7 @@ For Linux/Windows development, use **`op run`** with environment files:
 
 2. Run your app with secrets provisioned:
    ```bash
-   op run --env-file app.env -- node app.js
+   oprun --env-file app.env -- node app.js
    ```
 
 3. Secrets are resolved at runtime and never appear in plaintext

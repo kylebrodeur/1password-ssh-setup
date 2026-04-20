@@ -71,6 +71,13 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 ├── packages/
 │   ├── 1password-cli-tools/  # System setup & CLI tools
 │   │   ├── bin/setup.js      # Interactive CLI Wizard
+│   │   ├── lib/              # Modular setup components
+│   │   │   ├── config.js     # Shell config & npmrc helpers
+│   │   │   ├── constants.js  # Paths & constants
+│   │   │   ├── system.js     # Prereq checks & file installation
+│   │   │   └── providers/    # Extensible provider registry
+│   │   │       ├── index.js  # Known providers registry
+│   │   │       └── npm.js    # NPM provider with .npmrc setup
 │   │   ├── src/              # Core SSH and session scripts
 │   │   └── package.json
 │   └── pi-1password/         # Pi Agent Extension
@@ -191,10 +198,6 @@ OPENAI_API_KEY="op://Work/OpenAI/prod-key"
 
 # Result: Project value is used
 ```
-
-## Installation
-
-See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions including Service Account setup.
 
 ## Configuration
 
