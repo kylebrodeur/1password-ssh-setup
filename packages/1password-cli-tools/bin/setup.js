@@ -118,20 +118,20 @@ SSH_KEY_PASSPHRASE="${sshRef}"
             message: 'Enter Custom Variable Name (e.g., MY_API_KEY) or leave blank to finish:',
             placeholder: '',
           });
-          if (p.isCancel(customKey) || !customKey.trim()) {
+          if (p.isCancel(customKey) || !customKey?.trim()) {
             addingCustom = false;
             break;
           }
           const customRef = await p.text({
-            message: `Paste the secret reference for ${customKey.trim()}:`,
+            message: `Paste the secret reference for ${customKey?.trim() || ''}:`,
             placeholder: `op://Private/Custom/credential`,
           });
           if (p.isCancel(customRef)) {
             p.cancel('Operation cancelled.');
             process.exit(0);
           }
-          const cleanRef = customRef.trim().replace(/^["']|["']$/g, '');
-          envContent += `${customKey.trim()}="${cleanRef}"\n`;
+          const cleanRef = customRef?.trim().replace(/^["']|["']$/g, '') || '';
+          envContent += `${customKey?.trim() || ''}="${cleanRef}"\n`;
         }
         continue;
       }
@@ -148,7 +148,7 @@ SSH_KEY_PASSPHRASE="${sshRef}"
       }
       
       // Strip quotes
-      const cleanRef = ref.trim().replace(/^["']|["']$/g, '');
+      const cleanRef = ref?.trim().replace(/^["']|["']$/g, '') || '';
 
       envContent += `${key}="${cleanRef}"\n`;
 
