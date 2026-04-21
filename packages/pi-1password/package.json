@@ -1,6 +1,6 @@
 {
   "name": "pi-1password",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "1Password Pi coding agent secret management",
   "main": "extensions/1password.ts",
   "scripts": {
