@@ -1,6 +1,6 @@
 {
   "name": "1password-cli-tools",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "1Password SSH Setup - SSH agent integration and CLI tools",
   "bin": {
     "1password-cli-setup": "bin/setup.js",

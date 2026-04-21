@@ -3,6 +3,38 @@ import path from 'path';
 import * as p from '@clack/prompts';
 import { HOME_DIR, CONFIG_DIR, BIN_DIR } from './constants.js';
 
+export async function checkSshAgentPlugin() {
+  const shellRcPath = path.join(HOME_DIR, '.zshrc');
+  if (!fs.existsSync(shellRcPath)) return;
+
+  let currentRc = fs.readFileSync(shellRcPath, 'utf8');
+  
+  // Look for plugins=( ... ssh-agent ... )
+  const sshAgentRegex = /(plugins\s*\(\s*[^)]*?)\bssh-agent\b([^)]*\s*\))/;
+  if (sshAgentRegex.test(currentRc)) {
+    p.log.warn('We detected the Oh My Zsh "ssh-agent" plugin is enabled in your .zshrc.');
+    p.log.message('This plugin starts its own agent before 1Password can load, causing unexpected password prompts.');
+    
+    const removePlugin = await p.confirm({
+      message: 'Would you like us to safely remove the "ssh-agent" plugin from your .zshrc?',
+      initialValue: true,
+    });
+
+    if (p.isCancel(removePlugin)) {
+      p.cancel('Operation cancelled.');
+      process.exit(0);
+    }
+
+    if (removePlugin) {
+      // Remove ssh-agent from the plugins array, preserving whitespace formatting
+      let fixedRc = fs.readFileSync(shellRcPath, 'utf8');
+      fixedRc = fixedRc.replace(/(plugins\s*\(\s*[\s\S]*?)\bssh-agent\b\s*([\s\S]*?\))/, '$1$2');
+      fs.writeFileSync(shellRcPath, fixedRc);
+      p.log.success('Successfully removed "ssh-agent" plugin from .zshrc.');
+    }
+  }
+}
+
 export function updateShellRc(enableSSH) {
   const shellRcPath = fs.existsSync(path.join(HOME_DIR, '.zshrc'))
     ? path.join(HOME_DIR, '.zshrc')

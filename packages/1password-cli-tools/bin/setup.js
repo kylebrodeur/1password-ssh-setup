@@ -8,14 +8,18 @@ import path from 'path';
 import os from 'os';
 import { SSH_DIR, ENV_FILE } from '../lib/constants.js';
 import { checkPrereqs, setupDirs, installFiles } from '../lib/system.js';
-import { updateShellRc } from '../lib/config.js';
+import { updateShellRc, checkSshAgentPlugin } from '../lib/config.js';
 import { KNOWN_PROVIDERS } from '../lib/providers/index.js';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 const program = new Command();
 program
   .name('1password-cli-setup')
   .description('Interactive setup for 1Password CLI Tools and SSH Agent Integration')
-  .version('0.3.0')
+  .version(pkg.version)
   .parse(process.argv);
 
 async function main() {
@@ -35,6 +39,8 @@ async function main() {
       process.exit(0);
     }
   }
+
+  await checkSshAgentPlugin();
 
   checkPrereqs();
   setupDirs();
