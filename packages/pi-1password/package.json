@@ -1,6 +1,6 @@
 {
   "name": "pi-1password",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "1Password Pi coding agent secret management",
   "main": "extensions/1password.ts",
   "scripts": {
@@ -33,7 +33,7 @@
     "package.json"
   ],
   "dependencies": {
-    "1password-cli-tools": "^0.3.2"
+    "1password-cli-tools": "0.3.3"
   },
   "publishConfig": {
     "access": "public"

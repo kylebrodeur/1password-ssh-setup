@@ -9,11 +9,11 @@ CONFIG_DIR="${HOME}/.config/op-ssh"
 REFERENCES_FILE="${CONFIG_DIR}/references.conf"
 
 # Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+RED=$'\033[0;31m'
+GREEN=$'\033[0;32m'
+YELLOW=$'\033[1;33m'
+BLUE=$'\033[0;34m'
+NC=$'\033[0m' # No Color
 
 # Ensure config directory exists
 mkdir -p "$CONFIG_DIR"
@@ -26,15 +26,15 @@ ${BLUE}Usage:${NC}
   $SCRIPT_NAME <command> [options]
 
 ${BLUE}Commands:${NC}
-  ${GREEN}list${NC}                    List available vaults and SSH-related items
-  ${GREEN}get <reference>${NC}         Retrieve a secret value from a reference
-  ${GREEN}copy <reference>${NC}       Copy a reference to clipboard (requires xclip or wl-copy)
-  ${GREEN}template${NC}                Create a new reference template file
-  ${GREEN}add <name> <ref>${NC}        Save a named reference to config
-  ${GREEN}resolve <name>${NC}         Resolve a named reference from config
-  ${GREEN}env <file>${NC}              Load environment variables from 1Password references in file
-  ${GREEN}check${NC}                   Verify 1Password CLI is authenticated
-  ${GREEN}help${NC}                    Show this help message
+  ${GREEN}list${NC}                      List available vaults and SSH-related items
+  ${GREEN}get <reference>${NC}           Retrieve a secret value from a reference
+  ${GREEN}copy <reference>${NC}          Copy a reference to clipboard (requires xclip or wl-copy)
+  ${GREEN}template${NC}                  Create a new reference template file
+  ${GREEN}add <name> <ref>${NC}          Save a named reference to config
+  ${GREEN}resolve <name>${NC}           Resolve a named reference from config
+  ${GREEN}env <file>${NC}                Load environment variables from 1Password references in file
+  ${GREEN}check${NC}                     Verify 1Password CLI is authenticated
+  ${GREEN}help${NC}                      Show this help message
 
 ${BLUE}Examples:${NC}
   $SCRIPT_NAME list

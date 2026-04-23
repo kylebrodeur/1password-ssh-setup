@@ -1,0 +1,16 @@
+{
+  "nextId": 2,
+  "tasks": [
+    {
+      "id": "1",
+      "subject": "Test and Bump Version for 1Password SSH Setup",
+      "description": "Test op-reference functionality and bump versions in the monorepo",
+      "status": "in_progress",
+      "metadata": {},
+      "blocks": [],
+      "blockedBy": [],
+      "createdAt": 1776907384688,
+      "updatedAt": 1776907384688
+    }
+  ]
+}
