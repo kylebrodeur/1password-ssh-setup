@@ -113,7 +113,17 @@ If you enabled SSH Agent integration during the wizard, test it:
 ```bash
 ssh -T git@github.com
 ```
-You should be prompted for your 1Password master password (or use biometrics if configured). After unlocking, the SSH key is cached by `keychain` and you won't need to enter the password again until your session expires.
+
+**On a fresh restart** (when 1Password is locked), the flow is now:
+
+1. Your shell starts and sources `setup_ssh_agent.sh`
+2. If 1Password is locked, you are prompted for your **1Password master password** first
+3. After unlocking, `keychain` loads your SSH key
+4. The passphrase is retrieved automatically from 1Password — **no manual SSH passphrase typing**
+
+This works via `SSH_ASKPASS_REQUIRE=force` with a self-healing `askpass-1password.sh` helper. The helper never silently fails; if `op read` cannot fetch the passphrase, it prompts for 1Password login and then continues.
+
+If you cancel or skip the 1Password unlock, the setup falls back to a standard TTY passphrase prompt (so your shell isn't broken).
 
 ---
 
@@ -294,6 +304,10 @@ If you're having issues with `op signin`, the Session Manager, or the SSH Agent,
 export OP_DEBUG=1
 ```
 This will print detailed debug statements to `stderr` whenever the shell initializes, keychain runs, or `op signin` fails.
+
+### Interactive Signin Hangs or Is Silent in VS Code / tmux
+
+If `op signin` appears to hang or the password prompt disappears silently, this usually means `stdin` is not attached to a real TTY. The scripts now automatically detect this and redirect `op signin` from `/dev/tty`. If you still have issues, ensure your terminal emulator allocates a PTY.
 
 ### "Not signed in to 1Password"
 

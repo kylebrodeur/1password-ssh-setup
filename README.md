@@ -131,10 +131,14 @@ See [docs/SETUP.md](docs/SETUP.md) for detailed installation instructions.
 
 ### 1. SSH Agent (Keychain + 1Password)
 
-Manages SSH keys with 1Password-stored passphrases:
-- Unlocks once per session via 1Password
-- Keychain persists the unlocked key
-- No password prompts for subsequent SSH operations
+Manages SSH keys with 1Password-stored passphrases and **self-healing** authentication:
+
+- On a fresh shell restart: if 1Password is locked, you are prompted for your **1Password master password** first
+- Once authenticated, `keychain` loads your SSH key using the passphrase from 1Password
+- No manual SSH passphrase typing required
+- If you skip/cancel 1Password unlock, the setup falls back to a normal passphrase prompt
+- Works via `SSH_ASKPASS_REQUIRE=force` with a resilient `askpass-1password.sh` helper
+- Session tokens are cached for seamless login across multiple shells
 
 Original concept from Bas Nijholt's article on combining Keychain and 1Password CLI.
 

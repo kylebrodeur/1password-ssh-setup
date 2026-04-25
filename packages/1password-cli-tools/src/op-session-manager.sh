@@ -61,22 +61,33 @@ else
     # Ensure config dir exists
     mkdir -p "$(dirname "$TOKEN_FILE")"
 
+    # Guard against non-interactive / headless shells where prompting would hang
+    # or get swallowed by output redirection.
+    if [[ ! -t 0 ]] && [[ ! -r /dev/tty ]]; then
+        echo -e "\n\033[1;33m⚠ 1Password not authenticated and no TTY available.\033[0m" >&2
+        echo -e "    You can sign in later by running: \033[1;36mopon\033[0m\n" >&2
+        if [[ -n "$OP_DEBUG" ]]; then echo -e "\033[1;33m[DEBUG] No TTY (/dev/tty), skipping interactive op signin.\033[0m" >&2; fi
+        return 0
+    fi
+
     # We must prompt the user visibly!
     echo -e "\n\033[1;34m╭───────────────────────────────────────────╮\033[0m" >&2
     echo -e "\033[1;34m│\033[0m   \033[1;33m1Password Session Expired\033[0m               \033[1;34m│\033[0m" >&2
     echo -e "\033[1;34m╰───────────────────────────────────────────╯\033[0m" >&2
     echo -e "Please enter your master password to authenticate." >&2
     echo -e "\033[2m(Or press Ctrl+C to skip. You can sign in later by running 'opon')\033[0m\n" >&2
-    
-    # Run op signin, capturing output to the token file
-    # we don't force 2>/dev/tty because it breaks in some headless/piped environments
+
+    # Run op signin, capturing the token output to the token file.
+    # Redirect stdin from /dev/tty so op can read the password even if
+    # this script was sourced from a pipe or non-TTY context (e.g. tmux
+    # reattach, VS Code terminal, etc.).
     if [[ -n "$OP_DEBUG" ]]; then
-        echo -e "\033[1;33m[DEBUG] Running: op signin > \"$TOKEN_FILE\"\033[0m" >&2
-        op signin > "$TOKEN_FILE"
+        echo -e "\033[1;33m[DEBUG] Running: op signin > \"$TOKEN_FILE\" </dev/tty\033[0m" >&2
+        op signin > "$TOKEN_FILE" </dev/tty
         SIGNIN_EXIT=$?
         echo -e "\033[1;33m[DEBUG] Exit code: $SIGNIN_EXIT\033[0m" >&2
     else
-        op signin > "$TOKEN_FILE"
+        op signin > "$TOKEN_FILE" </dev/tty
         SIGNIN_EXIT=$?
     fi
 

@@ -1,7 +1,7 @@
 {
   "name": "1password-ssh-setup-workspace",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.5",
   "description": "1Password SSH Setup and Pi Integration Workspace",
   "scripts": {
     "test": "pnpm -r test"

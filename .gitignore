@@ -73,8 +73,8 @@ temp/
 *.tmp
 
 
-# Package files
-node_modules/
+# pi task tracking
+.pi/
+
+# Package tarballs
 *.tgz
-package-lock.json
-npm-debug.log
