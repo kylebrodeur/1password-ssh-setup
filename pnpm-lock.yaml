@@ -23,13 +23,13 @@ importers:
   packages/pi-1password:
     dependencies:
       1password-cli-tools:
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: 0.3.5
+        version: 0.3.5
 
 packages:
 
-  1password-cli-tools@0.3.0:
-    resolution: {integrity: sha512-1kMLFZsHvARVNn3+I44EUZ/L/V6kAEN24pPM8mzGmdL0NVdHEXuiCW8kX3uO6ySxda9eETM72DjlLxLMfZb0Ag==}
+  1password-cli-tools@0.3.5:
+    resolution: {integrity: sha512-ZEkrU6G0XKdmohUUVSMyfK3eDCugqcAyq+/NJO4LMMq8Lw16PXMnL4YBOTYcUWqtxmO+Pz8BAZsuUntmkjdnLw==}
     hasBin: true
 
   '@clack/core@0.3.5':
@@ -52,7 +52,7 @@ packages:
 
 snapshots:
 
-  1password-cli-tools@0.3.0:
+  1password-cli-tools@0.3.5:
     dependencies:
       '@clack/prompts': 0.7.0
       commander: 12.1.0

@@ -32,8 +32,8 @@ import { promisify } from "node:util";
 import { existsSync, readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { homedir } from "node:os";
-import type { ExtensionAPI, ExtensionContext, Theme, AutocompleteItem } from "@mariozechner/pi-coding-agent";
-import { Text } from "@mariozechner/pi-tui";
+import type { ExtensionAPI, ExtensionContext, Theme, AutocompleteItem } from "@earendil-works/pi-coding-agent";
+import { Text } from "@earendil-works/pi-tui";
 import { Type } from "@sinclair/typebox";
 
 const execAsync = promisify(exec);
