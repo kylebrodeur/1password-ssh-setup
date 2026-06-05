@@ -1,6 +1,6 @@
 {
   "name": "pi-1password",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "1Password Pi coding agent secret management",
   "main": "extensions/1password.ts",
   "scripts": {
@@ -37,5 +37,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.78.1"
   }
 }
